@@ -12,6 +12,11 @@ import AvailabilityScreen from './screens/onboarding/AvailabilityScreen'
 import SubjectsScreen from './screens/onboarding/SubjectsScreen'
 import PrivacySetupScreen from './screens/onboarding/PrivacySetupScreen'
 import WelcomeScreen from './screens/onboarding/WelcomeScreen'
+import FeatureTour1 from './screens/onboarding/FeatureTour1'
+import FeatureTour2 from './screens/onboarding/FeatureTour2'
+import FeatureTour3 from './screens/onboarding/FeatureTour3'
+import FeatureTour4 from './screens/onboarding/FeatureTour4'
+import FeatureTour5 from './screens/onboarding/FeatureTour5'
 
 // Home
 import HomeScreen from './screens/home/HomeScreen'
@@ -35,6 +40,11 @@ import ProfileScreen from './screens/profile/ProfileScreen'
 import EditProfileScreen from './screens/profile/EditProfileScreen'
 import SettingsScreen from './screens/profile/SettingsScreen'
 
+// Workspace
+import MyWorkspaceScreen from './screens/workspace/MyWorkspaceScreen'
+import SubjectDetailScreen from './screens/workspace/SubjectDetailScreen'
+import PracticeSessionScreen from './screens/workspace/PracticeSessionScreen'
+
 const screenMap = {
   splash: SplashScreen,
   login: LoginScreen,
@@ -44,6 +54,11 @@ const screenMap = {
   'onboarding-subjects': SubjectsScreen,
   'onboarding-privacy': PrivacySetupScreen,
   'onboarding-welcome': WelcomeScreen,
+  'feature-tour-1': FeatureTour1,
+  'feature-tour-2': FeatureTour2,
+  'feature-tour-3': FeatureTour3,
+  'feature-tour-4': FeatureTour4,
+  'feature-tour-5': FeatureTour5,
   home: HomeScreen,
   discover: DiscoverScreen,
   'user-profile-preview': UserProfilePreviewScreen,
@@ -56,12 +71,16 @@ const screenMap = {
   profile: ProfileScreen,
   'edit-profile': EditProfileScreen,
   settings: SettingsScreen,
+  'my-workspace': MyWorkspaceScreen,
+  'subject-detail': SubjectDetailScreen,
+  'practice-session': PracticeSessionScreen,
 }
 
 const authScreens = new Set([
   'login', 'signup',
   'onboarding-learning-style', 'onboarding-availability',
   'onboarding-subjects', 'onboarding-privacy', 'onboarding-welcome',
+  'feature-tour-1', 'feature-tour-2', 'feature-tour-3', 'feature-tour-4', 'feature-tour-5',
 ])
 
 function Router() {

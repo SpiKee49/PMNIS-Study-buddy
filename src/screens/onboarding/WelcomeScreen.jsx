@@ -42,7 +42,7 @@ export default function WelcomeScreen() {
 
       {/* CTA */}
       <button
-        onClick={() => reset('home')}
+        onClick={() => reset('feature-tour-1')}
         className="mt-10 w-full bg-white text-violet-700 py-4 rounded-2xl font-bold text-base shadow-xl active:scale-95 transition-transform"
       >
         Start Exploring

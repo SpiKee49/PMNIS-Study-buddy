@@ -321,6 +321,172 @@ export const learningStyles = [
   { id: 'kinesthetic', title: 'Hands-on', emoji: '🛠️', description: 'I learn best by doing and practicing' },
 ]
 
+export const mySubjects = [
+  {
+    id: 'sub1',
+    name: 'Machine Learning',
+    abbrev: 'ML',
+    color: 'bg-violet-500',
+    materialsCount: 8,
+    flashcardsCount: 32,
+    testsCount: 4,
+    mastery: 72,
+  },
+  {
+    id: 'sub2',
+    name: 'Algorithms & Data Structures',
+    abbrev: 'AL',
+    color: 'bg-amber-500',
+    materialsCount: 6,
+    flashcardsCount: 24,
+    testsCount: 3,
+    mastery: 58,
+  },
+  {
+    id: 'sub3',
+    name: 'Databases',
+    abbrev: 'DB',
+    color: 'bg-blue-500',
+    materialsCount: 5,
+    flashcardsCount: 18,
+    testsCount: 3,
+    mastery: 85,
+  },
+  {
+    id: 'sub4',
+    name: 'Web Development',
+    abbrev: 'WD',
+    color: 'bg-emerald-500',
+    materialsCount: 4,
+    flashcardsCount: 13,
+    testsCount: 2,
+    mastery: 41,
+  },
+]
+
+export const subjectMaterials = {
+  sub1: [
+    { id: 'mat1', name: 'Week 5 Notes — Neural Networks', type: 'pdf', size: '2.4 MB', date: '2 days ago' },
+    { id: 'mat2', name: 'Gradient Descent Explained', type: 'note', size: null, date: '3 days ago' },
+    { id: 'mat3', name: 'CNN Architecture Summary', type: 'note', size: null, date: '5 days ago' },
+    { id: 'mat4', name: 'Andrew Ng Lecture Notes Ch.4-6', type: 'pdf', size: '5.1 MB', date: '1 week ago' },
+  ],
+}
+
+export const flashcardDecks = {
+  sub1: [
+    { id: 'fd1', name: 'Neural Networks', cardCount: 12 },
+    { id: 'fd2', name: 'Backpropagation', cardCount: 8 },
+    { id: 'fd3', name: 'CNN Basics', cardCount: 12 },
+  ],
+}
+
+export const practiceTests = {
+  sub1: [
+    { id: 'pt1', name: 'Midterm Prep', questionCount: 3 },
+    { id: 'pt2', name: 'Week 5 Quiz', questionCount: 3 },
+    { id: 'pt3', name: 'Quick Review', questionCount: 3 },
+  ],
+}
+
+export const sampleQuestions = [
+  {
+    id: 'q1',
+    question: 'What is the primary purpose of a convolutional layer in a CNN?',
+    options: [
+      'To reduce the spatial dimensions of the input',
+      'To detect local patterns and features in the input',
+      'To normalize the activations between layers',
+      'To connect every neuron to the output layer',
+    ],
+    correctIndex: 1,
+  },
+  {
+    id: 'q2',
+    question: 'Which activation function is most commonly used in hidden layers of modern deep networks?',
+    options: ['Sigmoid', 'Tanh', 'ReLU', 'Softmax'],
+    correctIndex: 2,
+  },
+  {
+    id: 'q3',
+    question: 'What does the learning rate hyperparameter control?',
+    options: [
+      'The number of layers in the network',
+      'The size of steps taken during gradient descent',
+      'The number of training epochs',
+      'The ratio of training to validation data',
+    ],
+    correctIndex: 1,
+  },
+  {
+    id: 'q4',
+    question: 'What is overfitting in a machine learning model?',
+    options: [
+      'When the model performs well on training data but poorly on unseen data',
+      'When the model is too simple to capture patterns in the data',
+      'When the training loss is higher than the validation loss',
+      'When the learning rate is set too low',
+    ],
+    correctIndex: 0,
+  },
+  {
+    id: 'q5',
+    question: 'Which technique is used to prevent overfitting by randomly dropping neurons during training?',
+    options: ['Batch Normalization', 'Dropout', 'L2 Regularization', 'Data Augmentation'],
+    correctIndex: 1,
+  },
+  {
+    id: 'q6',
+    question: 'In a neural network, what is a bias term used for?',
+    options: [
+      'To scale the input features',
+      'To allow the activation function to shift horizontally',
+      'To reduce the number of parameters',
+      'To increase the training speed',
+    ],
+    correctIndex: 1,
+  },
+  {
+    id: 'q7',
+    question: 'What does the softmax function output in a classification network?',
+    options: [
+      'Binary values of 0 or 1',
+      'The index of the highest logit',
+      'A probability distribution over all classes',
+      'The raw logits normalized between -1 and 1',
+    ],
+    correctIndex: 2,
+  },
+  {
+    id: 'q8',
+    question: 'Which optimizer adaptively adjusts learning rates for each parameter?',
+    options: ['SGD', 'Momentum', 'Adam', 'RMSProp'],
+    correctIndex: 2,
+  },
+  {
+    id: 'q9',
+    question: 'What is the vanishing gradient problem?',
+    options: [
+      'When gradients become too large and cause instability',
+      'When gradients become very small during backpropagation, slowing learning in early layers',
+      'When the model converges before reaching the minimum loss',
+      'When weight initialization causes symmetry in the network',
+    ],
+    correctIndex: 1,
+  },
+  {
+    id: 'q10',
+    question: 'Which loss function is typically used for binary classification?',
+    options: [
+      'Mean Squared Error',
+      'Categorical Cross-Entropy',
+      'Binary Cross-Entropy',
+      'Hinge Loss',
+    ],
+    correctIndex: 2,
+  },
+]
+
 export const availabilitySlots = {
   Mon: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
   Tue: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
