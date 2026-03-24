@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { Search, Edit } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { conversations } from '../../data/dummy'
 
 export default function MessagesScreen() {
-  const { navigate } = useNav()
+  const { navigate, conversations } = useNav()
   const [query, setQuery] = useState('')
 
   const filtered = conversations.filter(c =>

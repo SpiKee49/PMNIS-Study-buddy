@@ -14,6 +14,8 @@ export const currentUser = {
   rating: 4.8,
   sessionsCount: 24,
   buddiesCount: 12,
+  studyCoins: 100,
+  coinsPurchased: [],
 }
 
 export const students = [
@@ -111,6 +113,82 @@ export const students = [
     buddiesCount: 4,
     matchScore: 70,
     online: true,
+  },
+  {
+    id: 'u6',
+    name: 'Anna Schmidt',
+    username: '@annas',
+    avatar: 'AS',
+    avatarColor: 'bg-indigo-500',
+    university: 'Slovak University of Technology',
+    faculty: 'Faculty of Informatics and IT',
+    year: '2nd Year',
+    bio: 'Data science enthusiast with a passion for machine learning algorithms. Love explaining complex concepts with visual diagrams!',
+    subjects: ['Machine Learning', 'Statistics', 'Python', 'Data Visualization'],
+    learningStyle: 'Visual',
+    availability: ['Mon 13:00-17:00', 'Tue 14:00-18:00', 'Thu 10:00-14:00'],
+    rating: 4.9,
+    sessionsCount: 28,
+    buddiesCount: 15,
+    matchScore: 98,
+    online: true,
+  },
+  {
+    id: 'u7',
+    name: 'Peter Wilson',
+    username: '@peterw',
+    avatar: 'PW',
+    avatarColor: 'bg-cyan-500',
+    university: 'Comenius University',
+    faculty: 'Faculty of Mathematics, Physics and Informatics',
+    year: '4th Year',
+    bio: 'Senior CS student specializing in algorithms and data structures. Great at breaking down complex problems into visual steps.',
+    subjects: ['Algorithms', 'Data Structures', 'Discrete Math', 'Python'],
+    learningStyle: 'Visual',
+    availability: ['Wed 09:00-13:00', 'Fri 14:00-18:00', 'Sat 10:00-15:00'],
+    rating: 4.7,
+    sessionsCount: 45,
+    buddiesCount: 22,
+    matchScore: 95,
+    online: false,
+  },
+  {
+    id: 'u8',
+    name: 'Emma Rodriguez',
+    username: '@emmar',
+    avatar: 'ER',
+    avatarColor: 'bg-rose-500',
+    university: 'Slovak University of Technology',
+    faculty: 'Faculty of Informatics and IT',
+    year: '3rd Year',
+    bio: 'Full-stack developer who loves teaching web development. Visual learner who creates amazing diagrams and flowcharts.',
+    subjects: ['Web Development', 'JavaScript', 'React', 'Node.js'],
+    learningStyle: 'Visual',
+    availability: ['Tue 16:00-20:00', 'Wed 16:00-20:00', 'Thu 18:00-21:00'],
+    rating: 4.8,
+    sessionsCount: 32,
+    buddiesCount: 18,
+    matchScore: 92,
+    online: true,
+  },
+  {
+    id: 'u9',
+    name: 'David Kim',
+    username: '@davidk',
+    avatar: 'DK',
+    avatarColor: 'bg-emerald-500',
+    university: 'Technical University of Košice',
+    faculty: 'Faculty of Electrical Engineering and Informatics',
+    year: '2nd Year',
+    bio: 'Database expert who creates visual ER diagrams and schema designs. Perfect for collaborative database projects.',
+    subjects: ['Databases', 'SQL', 'Data Modeling', 'Web Development'],
+    learningStyle: 'Visual',
+    availability: ['Mon 10:00-14:00', 'Wed 13:00-17:00', 'Fri 09:00-13:00'],
+    rating: 4.6,
+    sessionsCount: 25,
+    buddiesCount: 12,
+    matchScore: 88,
+    online: false,
   },
 ]
 
@@ -276,6 +354,16 @@ export const directMessages = {
     { id: 'm2', fromMe: true, text: 'It went well! The dynamic programming section was tricky though', time: '09:05' },
     { id: 'm3', fromMe: false, text: 'I shared the calculus notes in the workspace', time: '10:30' },
   ],
+  c3: [
+    { id: 'm1', fromMe: false, text: 'Hey Alex! Great session yesterday! Same time next week?', time: '18:00' },
+    { id: 'm2', fromMe: true, text: 'Definitely! I really enjoyed the React hooks discussion', time: '18:05' },
+    { id: 'm3', fromMe: false, text: 'Me too! I\'ll prepare some advanced patterns for next time', time: '18:10' },
+  ],
+  c4: [
+    { id: 'm1', fromMe: false, text: 'Found a bug in the sorting algorithm, check it out', time: '16:00' },
+    { id: 'm2', fromMe: true, text: 'Oh nice catch! That would cause an infinite loop', time: '16:15' },
+    { id: 'm3', fromMe: false, text: 'Yeah, the edge case with empty arrays wasn\'t handled', time: '16:20' },
+  ],
 }
 
 export const schedule = [
@@ -285,9 +373,14 @@ export const schedule = [
 ]
 
 export const aiSuggestions = [
-  { id: 'ai1', type: 'buddy', text: 'Maria Kovač is a great match for ML study sessions', action: 'View Profile', targetId: 'u1' },
-  { id: 'ai2', type: 'group', text: 'Join "Database Design Club" — matches your Databases interest', action: 'View Group', targetId: 'g4' },
-  { id: 'ai3', type: 'schedule', text: 'You\'re free Wednesday 10:00-14:00 — perfect for a study session', action: 'Schedule', targetId: null },
+  { id: 'rec1', type: 'buddy', text: 'Anna Schmidt is a perfect Visual learning match for your Machine Learning studies', action: 'View Profile', targetId: 'u6' },
+  { id: 'rec2', type: 'buddy', text: 'Peter Schmidt specializes in Algorithms with a Visual teaching approach', action: 'View Profile', targetId: 'u7' },
+  { id: 'rec3', type: 'buddy', text: 'Emma Wagner creates amazing visual diagrams for Web Development concepts', action: 'View Profile', targetId: 'u8' },
+  { id: 'rec4', type: 'buddy', text: 'David Becker excels at visual database design and ER diagrams', action: 'View Profile', targetId: 'u9' },
+  { id: 'rec5', type: 'buddy', text: 'Lisa Müller has excellent Python programming skills and loves pair programming', action: 'View Profile', targetId: 'u10' },
+  { id: 'rec6', type: 'buddy', text: 'Mark Weber specializes in Statistics and data analysis with practical examples', action: 'View Profile', targetId: 'u11' },
+  { id: 'rec7', type: 'buddy', text: 'Sophie Fischer creates interactive JavaScript demos for complex concepts', action: 'View Profile', targetId: 'u12' },
+  { id: 'rec8', type: 'buddy', text: 'Felix Bauer excels at Operating Systems and system-level programming', action: 'View Profile', targetId: 'u13' },
 ]
 
 export const notifications = [
@@ -295,6 +388,10 @@ export const notifications = [
   { id: 'n2', type: 'buddy', text: 'Maria Kovač sent you a buddy request', time: '14:00', read: false, icon: '👋' },
   { id: 'n3', type: 'message', text: 'New message in Algorithms Grind', time: '11:00', read: true, icon: '💬' },
   { id: 'n4', type: 'achievement', text: 'You completed 25 study sessions! 🎉', time: 'Yesterday', read: true, icon: '🏆' },
+  { id: 'n5', type: 'session', text: 'Database Design workshop tomorrow at 10:00', time: '2 hours ago', read: false, icon: '🗄️' },
+  { id: 'n6', type: 'buddy', text: 'Tomáš Novák accepted your buddy request', time: '4 hours ago', read: true, icon: '🤝' },
+  { id: 'n7', type: 'message', text: '3 new messages in Web Development Study Group', time: '6 hours ago', read: false, icon: '💬' },
+  { id: 'n8', type: 'achievement', text: 'Earned 50 Study Coins from feedback! ⭐', time: '1 day ago', read: true, icon: '🪙' },
 ]
 
 export const workspaceFiles = [
@@ -496,3 +593,79 @@ export const availabilitySlots = {
   Sat: ['10:00', '12:00', '14:00', '16:00'],
   Sun: ['10:00', '12:00', '14:00', '16:00'],
 }
+
+export const studyCoinsStore = [
+  {
+    id: 'premium-match',
+    name: 'Advanced Match Insights',
+    description: 'See detailed match percentages and compatibility reasons for all recommended buddies',
+    cost: 50,
+    category: 'matching',
+    icon: '🎯',
+  },
+  {
+    id: 'expanded-recommendations',
+    name: 'Expanded Recommendations',
+    description: 'Unlock 8 recommendations instead of 4 - discover more compatible study partners',
+    cost: 30,
+    category: 'matching',
+    icon: '🌟',
+  },
+  {
+    id: 'study-templates',
+    name: 'Study Session Templates',
+    description: 'Access pre-made agendas, timers, and structured frameworks for productive sessions',
+    cost: 20,
+    category: 'tools',
+    icon: '📋',
+  },
+  {
+    id: 'export-notes',
+    name: 'Export to PDF',
+    description: 'Save and export your meeting notes, agendas, and study plans as PDF documents',
+    cost: 15,
+    category: 'tools',
+    icon: '📄',
+  },
+]
+
+export const studySessionTemplates = [
+  {
+    id: 'template1',
+    name: 'Collaborative Problem Solving',
+    duration: '60 min',
+    breakdown: [
+      { phase: 'Intro & Topic Setup', time: '5 min' },
+      { phase: 'Warm-up Problem', time: '10 min' },
+      { phase: 'Main Problem Solving', time: '35 min' },
+      { phase: 'Review & Q&A', time: '10 min' },
+    ],
+    description: 'Perfect for working through coding problems, math proofs, or algorithm design.',
+  },
+  {
+    id: 'template2',
+    name: 'Concept Explanation Exchange',
+    duration: '45 min',
+    breakdown: [
+      { phase: 'Buddy 1 Explains Concept', time: '15 min' },
+      { phase: 'Q&A & Clarification', time: '5 min' },
+      { phase: 'Buddy 2 Explains Concept', time: '15 min' },
+      { phase: 'Q&A & Clarification', time: '5 min' },
+      { phase: 'Wrap-up', time: '5 min' },
+    ],
+    description: 'Great for deepening understanding through teaching each other key topics.',
+  },
+  {
+    id: 'template3',
+    name: 'Quiz & Review Session',
+    duration: '50 min',
+    breakdown: [
+      { phase: 'Setup & Ground Rules', time: '5 min' },
+      { phase: 'Quiz Round 1', time: '15 min' },
+      { phase: 'Review Answers', time: '10 min' },
+      { phase: 'Quiz Round 2', time: '15 min' },
+      { phase: 'Final Discussion', time: '5 min' },
+    ],
+    description: 'Ideal for exam prep and testing your knowledge in a supportive environment.',
+  },
+]

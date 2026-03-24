@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, SlidersHorizontal, Star, Zap } from 'lucide-react'
+import { Search, SlidersHorizontal, Star, Zap, Plus, CheckCircle, Users } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
 import { students } from '../../data/dummy'
@@ -11,12 +11,26 @@ export default function DiscoverScreen() {
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState('All')
   const [showFilters, setShowFilters] = useState(false)
+  const [addedBuddies, setAddedBuddies] = useState(new Set())
 
   const filtered = students.filter(s =>
     (query === '' || s.name.toLowerCase().includes(query.toLowerCase()) ||
      s.subjects.some(sub => sub.toLowerCase().includes(query.toLowerCase()))) &&
     (activeFilter === 'All' || s.subjects.some(sub => sub.toLowerCase().includes(activeFilter.toLowerCase())))
   )
+
+  const handleAddBuddy = (e, studentId) => {
+    e.stopPropagation()
+    setAddedBuddies(prev => {
+      const newSet = new Set(prev)
+      newSet.add(studentId)
+      return newSet
+    })
+    // Navigate to direct message with the student's ID
+    setTimeout(() => {
+      navigate('direct-message', { userId: studentId })
+    }, 600)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,11 +43,11 @@ export default function DiscoverScreen() {
               <p className="text-sm text-gray-500 mt-0.5">Find study buddies that match your style</p>
             </div>
             <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${showFilters ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-600'}`}
+              onClick={() => navigate('buddies')}
+              className="flex items-center gap-2 bg-emerald-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-emerald-700 transition-colors"
             >
-              <SlidersHorizontal size={15} />
-              Filters
+              <Users size={15} />
+              View My Buddies
             </button>
           </div>
 
@@ -85,12 +99,18 @@ export default function DiscoverScreen() {
         </p>
         <div className="grid grid-cols-2 gap-4">
           {filtered.map(student => (
-            <button
+            <div
               key={student.id}
-              onClick={() => navigate('user-profile-preview', { userId: student.id })}
-              className="bg-white rounded-3xl p-5 shadow-sm text-left hover:shadow-md transition-shadow"
+              className="bg-white rounded-3xl p-5 shadow-sm hover:shadow-md transition-shadow text-left relative overflow-hidden group cursor-pointer"
             >
-              <div className="flex items-start gap-4">
+              {/* Card Background */}
+              <button
+                onClick={() => navigate('user-profile-preview', { userId: student.id })}
+                className="absolute inset-0"
+              />
+
+              {/* Card Content */}
+              <div className="flex items-start gap-4 relative z-10 pointer-events-none">
                 <Avatar initials={student.avatar} colorClass={student.avatarColor} size="lg" online={student.online} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
@@ -122,7 +142,24 @@ export default function DiscoverScreen() {
                   </div>
                 </div>
               </div>
-            </button>
+
+              {/* Add Buddy Button */}
+              <button
+                onClick={(e) => handleAddBuddy(e, student.id)}
+                className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 pointer-events-auto ${
+                  addedBuddies.has(student.id)
+                    ? 'bg-emerald-100 hover:bg-emerald-200'
+                    : 'bg-gray-100 group-hover:bg-violet-600 opacity-0 group-hover:opacity-100'
+                }`}
+                title={addedBuddies.has(student.id) ? 'Added to buddies' : 'Add as buddy'}
+              >
+                {addedBuddies.has(student.id) ? (
+                  <CheckCircle size={20} className="text-emerald-600" />
+                ) : (
+                  <Plus size={20} className={`text-violet-600 group-hover:text-white transition-colors`} />
+                )}
+              </button>
+            </div>
           ))}
         </div>
       </div>

@@ -1,11 +1,33 @@
+import { useState, useRef, useEffect } from 'react'
 import { Bell, Sparkles, Calendar } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { currentUser, schedule, aiSuggestions, notifications } from '../../data/dummy'
+import { currentUser, aiSuggestions, notifications } from '../../data/dummy'
 
 export default function HomeScreen() {
-  const { navigate } = useNav()
+  const { navigate, schedule, hasUnlocked } = useNav()
   const unreadNotifs = notifications.filter(n => !n.read).length
+
+  // Show expanded recommendations if unlocked, otherwise show first 4
+  const displayedSuggestions = hasUnlocked('expanded-recommendations') ? aiSuggestions : aiSuggestions.slice(0, 4)
+
+  // State for notification dropdown
+  const [showNotifications, setShowNotifications] = useState(false)
+  const notificationsRef = useRef(null)
+
+  // Click outside to close notifications
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setShowNotifications(false)
+      }
+    }
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showNotifications])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,7 +39,10 @@ export default function HomeScreen() {
             <h1 className="text-white text-2xl font-bold mt-0.5">{currentUser.name.split(' ')[0]} 👋</h1>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+            >
               <Bell size={18} className="text-white" />
               {unreadNotifs > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 rounded-full text-white text-[9px] flex items-center justify-center font-bold">
@@ -83,14 +108,14 @@ export default function HomeScreen() {
             </div>
           </div>
 
-          {/* AI Suggestions */}
-          <div className="bg-white rounded-3xl shadow-sm p-5">
+          {/* Recommendations */}
+          <div className="bg-white rounded-3xl shadow-sm p-5 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles size={16} className="text-amber-500" />
-              <h2 className="font-bold text-sm text-gray-800">AI Suggestions</h2>
+              <h2 className="font-bold text-sm text-gray-800">Recommendations</h2>
             </div>
-            <div className="space-y-3">
-              {aiSuggestions.map(s => (
+            <div className={`space-y-3 ${hasUnlocked('expanded-recommendations') ? 'max-h-96 overflow-y-auto pr-2' : ''}`}>
+              {displayedSuggestions.map(s => (
                 <div key={s.id} className="p-3 bg-amber-50 rounded-2xl">
                   <p className="text-xs text-gray-700 leading-relaxed mb-2">{s.text}</p>
                   <button
@@ -106,40 +131,60 @@ export default function HomeScreen() {
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Notifications — full width */}
-          <div className="col-span-3 bg-white rounded-3xl shadow-sm p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Bell size={16} className="text-gray-600" />
-                <h2 className="font-bold text-sm text-gray-800">Notifications</h2>
-              </div>
+      {/* Notifications Dropdown */}
+      {showNotifications && (
+        <div 
+          ref={notificationsRef}
+          className="fixed top-24 right-8 bg-white rounded-2xl shadow-2xl w-80 max-h-96 z-50 flex flex-col border border-gray-100"
+        >
+          {/* Header */}
+          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-sm text-gray-900">Notifications</h3>
               {unreadNotifs > 0 && (
-                <span className="bg-rose-100 text-rose-600 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                  {unreadNotifs} new
+                <span className="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded-full">
+                  {unreadNotifs}
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {notifications.map(n => (
-                <div
-                  key={n.id}
-                  className={`flex items-start gap-3 p-3 rounded-2xl ${n.read ? 'bg-gray-50' : 'bg-violet-50'}`}
-                >
-                  <span className="text-xl">{n.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-xs leading-relaxed ${n.read ? 'text-gray-600' : 'text-gray-800 font-medium'}`}>
-                      {n.text}
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{n.time}</p>
+          </div>
+
+          {/* Notifications List */}
+          <div className="overflow-y-auto flex-1">
+            {notifications.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {notifications.map(n => (
+                  <div
+                    key={n.id}
+                    className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                      n.read ? 'bg-white' : 'bg-violet-50'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-lg flex-shrink-0">{n.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm leading-relaxed ${n.read ? 'text-gray-600' : 'text-gray-800 font-semibold'}`}>
+                          {n.text}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">{n.time}</p>
+                      </div>
+                      {!n.read && <div className="w-2 h-2 bg-violet-500 rounded-full flex-shrink-0 mt-1.5" />}
+                    </div>
                   </div>
-                  {!n.read && <div className="w-2 h-2 bg-violet-500 rounded-full flex-shrink-0 mt-1" />}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center">
+                <Bell size={32} className="text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">No notifications</p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

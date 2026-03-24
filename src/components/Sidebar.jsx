@@ -1,11 +1,11 @@
-import { Home, Compass, Users, MessageCircle, User, BookOpen, Settings } from 'lucide-react'
+import { Home, Compass, Users, MessageCircle, User, BookOpen, Settings, Heart, Coins } from 'lucide-react'
 import { useNav } from '../context/NavigationContext'
 import { currentUser } from '../data/dummy'
-import { conversations } from '../data/dummy'
 
 const navItems = [
   { id: 'home',     label: 'Home',      icon: Home,          screen: 'home' },
   { id: 'discover', label: 'Discover',  icon: Compass,       screen: 'discover' },
+  { id: 'buddies',  label: 'Buddies',   icon: Heart,         screen: 'buddies' },
   { id: 'groups',   label: 'Groups',    icon: Users,         screen: 'groups' },
   { id: 'messages', label: 'Messages',  icon: MessageCircle, screen: 'messages' },
   { id: 'profile',  label: 'Profile',   icon: User,          screen: 'profile' },
@@ -14,13 +14,14 @@ const navItems = [
 const tabScreens = {
   home: 'home',
   discover: 'discover', 'user-profile-preview': 'discover',
+  buddies: 'buddies',
   groups: 'groups', 'group-detail': 'groups', 'group-chat': 'groups', workspace: 'groups',
   messages: 'messages', 'direct-message': 'messages',
   profile: 'profile', 'edit-profile': 'profile', settings: 'profile',
 }
 
 export default function Sidebar({ active }) {
-  const { navigate } = useNav()
+  const { navigate, studyCoins, conversations } = useNav()
   const activeTab = tabScreens[active] || 'home'
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unread, 0)
 
@@ -76,7 +77,20 @@ export default function Sidebar({ active }) {
       </nav>
 
       {/* User card at bottom */}
-      <div className="px-3 py-3 border-t border-gray-100">
+      <div className="px-3 py-3 border-t border-gray-100 space-y-3">
+        {/* Coins Display */}
+        <button
+          onClick={() => navigate('coins-store')}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-amber-100 to-yellow-100 hover:from-amber-200 hover:to-yellow-200 transition-all border border-amber-200"
+        >
+          <Coins size={16} className="text-amber-600 flex-shrink-0" />
+          <div className="flex-1 text-left">
+            <p className="text-xs text-amber-700 font-semibold">Study Coins</p>
+            <p className="text-sm font-bold text-amber-900">{studyCoins}</p>
+          </div>
+        </button>
+
+        {/* User card */}
         <button
           onClick={() => navigate('settings')}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"

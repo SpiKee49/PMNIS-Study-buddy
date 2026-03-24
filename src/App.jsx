@@ -25,6 +25,12 @@ import HomeScreen from './screens/home/HomeScreen'
 import DiscoverScreen from './screens/discover/DiscoverScreen'
 import UserProfilePreviewScreen from './screens/discover/UserProfilePreviewScreen'
 
+// Buddies
+import BuddiesScreen from './screens/buddies/BuddiesScreen'
+
+// Coins
+import CoinsStoreScreen from './screens/coins/CoinsStoreScreen'
+
 // Groups
 import GroupsScreen from './screens/groups/GroupsScreen'
 import GroupDetailScreen from './screens/groups/GroupDetailScreen'
@@ -62,6 +68,8 @@ const screenMap = {
   home: HomeScreen,
   discover: DiscoverScreen,
   'user-profile-preview': UserProfilePreviewScreen,
+  buddies: BuddiesScreen,
+  'coins-store': CoinsStoreScreen,
   groups: GroupsScreen,
   'group-detail': GroupDetailScreen,
   'group-chat': GroupChatScreen,

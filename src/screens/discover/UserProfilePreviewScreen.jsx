@@ -1,11 +1,21 @@
 import { useNav } from '../../context/NavigationContext'
 import { MessageCircle, UserPlus, Clock, BookOpen, Zap, ChevronLeft } from 'lucide-react'
 import Avatar from '../../components/Avatar'
-import { students } from '../../data/dummy'
+import { students, conversations } from '../../data/dummy'
 
 export default function UserProfilePreviewScreen() {
-  const { params, navigate, goBack } = useNav()
+  const { params, navigate, goBack, addBuddy, buddies } = useNav()
   const student = students.find(s => s.id === params.userId) || students[0]
+
+  const handleAddBuddy = () => {
+    if (!buddies.includes(student.id)) {
+      addBuddy(student.id)
+      alert(`${student.name} has been added to your buddies!`)
+      navigate('buddies')
+    } else {
+      alert(`${student.name} is already in your buddies!`)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,12 +61,18 @@ export default function UserProfilePreviewScreen() {
             </div>
 
             <button
-              onClick={() => navigate('direct-message', { conversationId: 'c1', userId: student.id })}
+              onClick={() => {
+                const conversation = conversations.find(c => c.userId === student.id)
+                navigate('direct-message', conversation ? { conversationId: conversation.id } : { userId: student.id })
+              }}
               className="w-full flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-2xl font-semibold text-sm text-gray-700 hover:bg-gray-200 transition-colors"
             >
               <MessageCircle size={16} /> Message
             </button>
-            <button className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl font-semibold text-sm text-white shadow-md shadow-violet-200">
+            <button
+              onClick={handleAddBuddy}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl font-semibold text-sm text-white shadow-md shadow-violet-200"
+            >
               <UserPlus size={16} /> Add Buddy
             </button>
           </div>
