@@ -1,12 +1,14 @@
 import { createContext, useContext, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { schedule as initialSchedule, conversations as initialConversations, currentUser, students, mySubjects as initialSubjects, subjectMaterials as initialSubjectMaterials, flashcardDecks as initialFlashcardDecks, practiceTests as initialPracticeTests, groups as initialGroups, groupMessages as initialGroupMessages, workspaceFiles as initialWorkspaceFiles } from '../data/dummy'
 
 const NavigationContext = createContext(null)
 
 export function NavigationProvider({ children }) {
-  const [screen, setScreen] = useState('splash')
-  const [history, setHistory] = useState([])
-  const [params, setParams] = useState({})
+  const routerNavigate = useNavigate()
+  const location = useLocation()
+  const screen = location.pathname.replace(/^\//, '') || 'splash'
+  const params = location.state || {}
   const [schedule, setSchedule] = useState(initialSchedule)
   const [buddies, setBuddies] = useState(initialConversations.map(c => c.userId))
   const [conversations, setConversations] = useState(initialConversations)
@@ -27,24 +29,15 @@ export function NavigationProvider({ children }) {
   const [language, setLanguage] = useState('English')
 
   const navigate = (to, newParams = {}) => {
-    setHistory(h => [...h, { screen, params }])
-    setScreen(to)
-    setParams(newParams)
+    routerNavigate('/' + to, { state: newParams })
   }
 
   const goBack = () => {
-    if (history.length > 0) {
-      const prev = history[history.length - 1]
-      setHistory(h => h.slice(0, -1))
-      setScreen(prev.screen)
-      setParams(prev.params || {})
-    }
+    routerNavigate(-1)
   }
 
   const reset = (to, newParams = {}) => {
-    setHistory([])
-    setScreen(to)
-    setParams(newParams)
+    routerNavigate('/' + to, { state: newParams, replace: true })
   }
 
   const addToSchedule = (meeting) => {

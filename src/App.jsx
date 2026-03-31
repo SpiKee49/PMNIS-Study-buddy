@@ -1,3 +1,4 @@
+import { Navigate, useLocation } from 'react-router-dom'
 import { NavigationProvider, useNav } from './context/NavigationContext'
 import Sidebar from './components/Sidebar'
 
@@ -20,6 +21,7 @@ import FeatureTour5 from './screens/onboarding/FeatureTour5'
 
 // Home
 import HomeScreen from './screens/home/HomeScreen'
+import SessionRoomScreen from './screens/home/SessionRoomScreen'
 
 // Discover
 import DiscoverScreen from './screens/discover/DiscoverScreen'
@@ -72,6 +74,7 @@ const screenMap = {
   'feature-tour-4': FeatureTour4,
   'feature-tour-5': FeatureTour5,
   home: HomeScreen,
+  'session-room': SessionRoomScreen,
   discover: DiscoverScreen,
   'user-profile-preview': UserProfilePreviewScreen,
   buddies: BuddiesScreen,
@@ -87,9 +90,9 @@ const screenMap = {
   settings: SettingsScreen,
   'my-workspace': MyWorkspaceScreen,
   'subject-detail': SubjectDetailScreen,
-  'flashcards': FlashcardsScreen,
+  flashcards: FlashcardsScreen,
   'practice-session': PracticeSessionScreen,
-  'summary': SummaryScreen,
+  summary: SummaryScreen,
   'quick-flashcards': QuickFlashcardsScreen,
   'quick-practice': QuickPracticeScreen,
   'quick-summary': QuickSummaryScreen,
@@ -103,13 +106,16 @@ const authScreens = new Set([
   'feature-tour-1', 'feature-tour-2', 'feature-tour-3', 'feature-tour-4', 'feature-tour-5',
 ])
 
-function Router() {
+function AppLayout() {
   const { screen, darkMode } = useNav()
-  const Screen = screenMap[screen] || HomeScreen
+  const location = useLocation()
+  const Screen = screenMap[screen]
+
+  if (!Screen) return <Navigate to="/home" replace />
 
   if (screen === 'splash') {
     return (
-      <div key={screen} className="screen-enter">
+      <div key={location.key} className="screen-enter">
         <Screen />
       </div>
     )
@@ -118,7 +124,7 @@ function Router() {
   if (authScreens.has(screen)) {
     return (
       <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-violet-50 via-white to-indigo-50'} flex items-center justify-center p-6`}>
-        <div key={screen} className={`w-full max-w-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-3xl shadow-xl overflow-hidden screen-enter`}>
+        <div key={location.key} className={`w-full max-w-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-3xl shadow-xl overflow-hidden screen-enter`}>
           <Screen />
         </div>
       </div>
@@ -129,7 +135,7 @@ function Router() {
     <div className={`flex min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <Sidebar active={screen} />
       <main className={`flex-1 overflow-y-auto min-h-screen ${darkMode ? 'dark' : ''}`}>
-        <div key={screen} className="screen-enter h-full">
+        <div key={location.key} className="screen-enter h-full">
           <Screen />
         </div>
       </main>
@@ -140,7 +146,7 @@ function Router() {
 export default function App() {
   return (
     <NavigationProvider>
-      <Router />
+      <AppLayout />
     </NavigationProvider>
   )
 }
