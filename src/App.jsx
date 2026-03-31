@@ -18,6 +18,7 @@ import FeatureTour2 from './screens/onboarding/FeatureTour2'
 import FeatureTour3 from './screens/onboarding/FeatureTour3'
 import FeatureTour4 from './screens/onboarding/FeatureTour4'
 import FeatureTour5 from './screens/onboarding/FeatureTour5'
+import MatchPreferencesOnboardingScreen from './screens/onboarding/MatchPreferencesOnboardingScreen'
 
 // Home
 import HomeScreen from './screens/home/HomeScreen'
@@ -73,6 +74,7 @@ const screenMap = {
   'feature-tour-3': FeatureTour3,
   'feature-tour-4': FeatureTour4,
   'feature-tour-5': FeatureTour5,
+  'onboarding-match-prefs': MatchPreferencesOnboardingScreen,
   home: HomeScreen,
   'session-room': SessionRoomScreen,
   discover: DiscoverScreen,
@@ -102,7 +104,7 @@ const screenMap = {
 const authScreens = new Set([
   'login', 'signup',
   'onboarding-learning-style', 'onboarding-availability',
-  'onboarding-subjects', 'onboarding-privacy', 'onboarding-welcome',
+  'onboarding-subjects', 'onboarding-privacy', 'onboarding-match-prefs', 'onboarding-welcome',
   'feature-tour-1', 'feature-tour-2', 'feature-tour-3', 'feature-tour-4', 'feature-tour-5',
 ])
 

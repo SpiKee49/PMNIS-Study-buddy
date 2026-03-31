@@ -13,8 +13,23 @@ function Toggle({ on, onToggle }) {
   )
 }
 
+const matchFactors = [
+  { key: 'learningStyle', label: 'Learning Style', emoji: '🧠' },
+  { key: 'studyVibe', label: 'Study Vibe', emoji: '☕' },
+  { key: 'subjects', label: 'Shared Subjects', emoji: '📚' },
+  { key: 'availability', label: 'Availability', emoji: '📅' },
+  { key: 'yearProximity', label: 'Academic Year', emoji: '🎓' },
+  { key: 'rating', label: 'Peer Rating', emoji: '⭐' },
+]
+
+const matchLevels = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Med' },
+  { value: 'high', label: 'High' },
+]
+
 export default function SettingsScreen() {
-  const { goBack, reset, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage } = useNav()
+  const { goBack, reset, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage, matchPreferences, setMatchPreferences, resetMatchPreferences } = useNav()
   
   const [showLanguageModal, setShowLanguageModal] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -146,6 +161,50 @@ export default function SettingsScreen() {
             </div>
           </div>
         ))}
+
+        {/* Match Preferences */}
+        <div>
+          <p className={`text-xs font-bold ${darkMode ? 'text-gray-500' : 'text-gray-400'} uppercase tracking-widest px-1 mb-2`}>Match Preferences</p>
+          <div className={`${darkMode ? 'bg-gray-700' : 'bg-white'} rounded-2xl shadow-sm overflow-hidden`}>
+            <div className={`px-4 py-3 ${darkMode ? 'border-b border-gray-600' : 'border-b border-gray-50'}`}>
+              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} leading-relaxed`}>
+                Adjust how much each factor influences your buddy match score.
+              </p>
+            </div>
+            {matchFactors.map((f, i) => (
+              <div
+                key={f.key}
+                className={`flex items-center gap-3 px-4 py-3 ${i < matchFactors.length - 1 ? darkMode ? 'border-b border-gray-600' : 'border-b border-gray-50' : ''}`}
+              >
+                <span className="text-lg flex-shrink-0">{f.emoji}</span>
+                <span className={`flex-1 text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{f.label}</span>
+                <div className="flex gap-1">
+                  {matchLevels.map(l => (
+                    <button
+                      key={l.value}
+                      onClick={() => setMatchPreferences(prev => ({ ...prev, [f.key]: l.value }))}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                        matchPreferences[f.key] === l.value
+                          ? darkMode ? 'bg-violet-600 border-violet-600 text-white' : 'bg-violet-600 border-violet-600 text-white'
+                          : darkMode ? 'bg-gray-600 border-gray-600 text-gray-300 hover:border-violet-400' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-violet-300'
+                      }`}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className={`px-4 py-3 ${darkMode ? 'border-t border-gray-600' : 'border-t border-gray-50'}`}>
+              <button
+                onClick={resetMatchPreferences}
+                className={`text-xs font-semibold ${darkMode ? 'text-violet-400 hover:text-violet-300' : 'text-violet-600 hover:text-violet-700'}`}
+              >
+                Reset to defaults
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Danger zone */}
         <div>

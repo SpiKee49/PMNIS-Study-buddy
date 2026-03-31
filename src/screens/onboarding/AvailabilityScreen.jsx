@@ -21,11 +21,11 @@ export default function AvailabilityScreen() {
       {/* Progress */}
       <div className="pt-8 px-8">
         <div className="flex gap-1.5 mb-6">
-          {[1,2,3,4,5].map(i => (
+          {[1,2,3,4,5,6].map(i => (
             <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= 2 ? 'bg-violet-600' : 'bg-gray-200'}`} />
           ))}
         </div>
-        <p className="text-xs font-semibold text-violet-600 uppercase tracking-widest">Step 2 of 5</p>
+        <p className="text-xs font-semibold text-violet-600 uppercase tracking-widest">Step 2 of 6</p>
         <h1 className="text-2xl font-bold text-gray-900 mt-1 leading-tight">When are you free?</h1>
         <p className="text-gray-500 text-sm mt-2">Select your typical available time slots</p>
       </div>

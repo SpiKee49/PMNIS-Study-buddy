@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { schedule as initialSchedule, conversations as initialConversations, currentUser, students, mySubjects as initialSubjects, subjectMaterials as initialSubjectMaterials, flashcardDecks as initialFlashcardDecks, practiceTests as initialPracticeTests, groups as initialGroups, groupMessages as initialGroupMessages, workspaceFiles as initialWorkspaceFiles } from '../data/dummy'
+import { defaultMatchPreferences } from '../utils/matchScore'
 
 const NavigationContext = createContext(null)
 
@@ -23,6 +24,8 @@ export function NavigationProvider({ children }) {
   const [groupMessages, setGroupMessages] = useState(initialGroupMessages)
   const [groupWorkspaceFiles, setGroupWorkspaceFiles] = useState({ global: initialWorkspaceFiles })
   const [reminders, setReminders] = useState([])
+  const [matchPreferences, setMatchPreferences] = useState(defaultMatchPreferences)
+  const resetMatchPreferences = () => setMatchPreferences(defaultMatchPreferences)
   const [darkMode, setDarkMode] = useState(false)
   const [pushNotifications, setPushNotifications] = useState(true)
   const [profileVisibility, setProfileVisibility] = useState('Public')
@@ -405,7 +408,7 @@ export function NavigationProvider({ children }) {
   }
 
   return (
-    <NavigationContext.Provider value={{ screen, params, navigate, goBack, reset, schedule, addToSchedule, buddies, addBuddy, removeBuddy, conversations, mySubjects, setMySubjects, addSubject, removeSubject, subjectMaterials, subjectFlashcardDecks, subjectPracticeTests, addMaterial, removeMaterial, addFlashcardDeck, removeFlashcardDeck, updateFlashcardDeck, addPracticeTest, removePracticeTest, studyCoins, addCoins, spendCoins, hasUnlocked, coinsPurchased, summaryOnboarding, setSummaryOnboarding, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage, allGroups, createGroup, joinGroup, leaveGroup, inviteToGroup, updateGroupSession, groupMessages, sendGroupMessage, groupWorkspaceFiles, uploadGroupFile, reminders, addReminder, removeReminder }}>
+    <NavigationContext.Provider value={{ screen, params, navigate, goBack, reset, schedule, addToSchedule, buddies, addBuddy, removeBuddy, conversations, mySubjects, setMySubjects, addSubject, removeSubject, subjectMaterials, subjectFlashcardDecks, subjectPracticeTests, addMaterial, removeMaterial, addFlashcardDeck, removeFlashcardDeck, updateFlashcardDeck, addPracticeTest, removePracticeTest, studyCoins, addCoins, spendCoins, hasUnlocked, coinsPurchased, summaryOnboarding, setSummaryOnboarding, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage, allGroups, createGroup, joinGroup, leaveGroup, inviteToGroup, updateGroupSession, groupMessages, sendGroupMessage, groupWorkspaceFiles, uploadGroupFile, reminders, addReminder, removeReminder, matchPreferences, setMatchPreferences, resetMatchPreferences }}>
       {children}
     </NavigationContext.Provider>
   )

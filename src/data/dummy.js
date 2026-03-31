@@ -922,14 +922,6 @@ export const availabilitySlots = {
 
 export const studyCoinsStore = [
   {
-    id: 'premium-match',
-    name: 'Advanced Match Insights',
-    description: 'See detailed match percentages and compatibility reasons for all recommended buddies',
-    cost: 50,
-    category: 'matching',
-    icon: '🎯',
-  },
-  {
     id: 'expanded-recommendations',
     name: 'Expanded Recommendations',
     description: 'Unlock 8 recommendations instead of 4 - discover more compatible study partners',

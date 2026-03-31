@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Search, SlidersHorizontal, Star, Zap, CheckCircle, Users, X, ChevronLeft } from 'lucide-react'
+import { Search, SlidersHorizontal, Star, CheckCircle, Users, X, ChevronLeft } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { students } from '../../data/dummy'
+import { students, currentUser } from '../../data/dummy'
+import { computeMatchScore, getMatchLabel } from '../../utils/matchScore'
 
 const FIELDS = [
   { id: 'All', label: 'All Fields', emoji: '🌐' },
@@ -41,7 +42,7 @@ const VIBE_ICON = { 'Casual': '☕', 'Discussion': '💬', 'Structured': '📋' 
 const ALL_SCHOOLS = [...new Set(students.map(s => s.university).filter(Boolean))].sort()
 
 export default function DiscoverScreen() {
-  const { navigate, goBack, params, addBuddy, buddies, inviteToGroup, allGroups, hasUnlocked } = useNav()
+  const { navigate, goBack, params, addBuddy, buddies, inviteToGroup, allGroups, matchPreferences } = useNav()
 
   // Pick mode: passed from GroupDetailScreen when inviting to an existing group
   const pickMode = !!params?.pickGroupId
@@ -436,6 +437,8 @@ export default function DiscoverScreen() {
         <div className="grid grid-cols-2 gap-4">
           {filtered.map(student => {
             const isSelected = selected.has(student.id)
+            const { score } = computeMatchScore(currentUser, student, matchPreferences)
+            const matchInfo = getMatchLabel(score)
             return (
               <div
                 key={student.id}
@@ -454,17 +457,9 @@ export default function DiscoverScreen() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="font-bold text-gray-900 truncate">{student.name}</h3>
-                      {hasUnlocked('premium-match') ? (
-                        <div className="flex items-center gap-1 bg-violet-50 px-2 py-0.5 rounded-full flex-shrink-0">
-                          <Zap size={10} className="text-violet-600" />
-                          <span className="text-[11px] font-bold text-violet-600">{student.matchScore}%</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full flex-shrink-0" title="Unlock Advanced Match Insights to see compatibility">
-                          <Zap size={10} className="text-gray-400" />
-                          <span className="text-[11px] font-bold text-gray-400">–%</span>
-                        </div>
-                      )}
+                      <div className={`px-2 py-0.5 rounded-full flex-shrink-0 ${matchInfo.bg}`}>
+                        <span className={`text-[11px] font-bold ${matchInfo.text}`}>{matchInfo.label}</span>
+                      </div>
                     </div>
 
                     <p className="text-xs text-gray-500 mt-0.5 truncate">{student.university} · {student.year}</p>
