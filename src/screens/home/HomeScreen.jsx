@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, Sparkles, Calendar } from 'lucide-react'
+import { Bell, Sparkles, Calendar, X } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
 import { currentUser, aiSuggestions, notifications } from '../../data/dummy'
 
 export default function HomeScreen() {
-  const { navigate, schedule, hasUnlocked } = useNav()
+  const { navigate, schedule, hasUnlocked, reminders, removeReminder } = useNav()
   const unreadNotifs = notifications.filter(n => !n.read).length
 
   // Show expanded recommendations if unlocked, otherwise show first 4
@@ -50,7 +50,13 @@ export default function HomeScreen() {
                 </span>
               )}
             </button>
-            <Avatar initials={currentUser.avatar} colorClass="bg-white/30" size="sm" />
+            <button
+              onClick={() => navigate('profile')}
+              className="hover:opacity-80 transition-opacity"
+              title="Go to profile"
+            >
+              <Avatar initials={currentUser.avatar} colorClass="bg-white/30" size="sm" />
+            </button>
           </div>
         </div>
 
@@ -76,8 +82,36 @@ export default function HomeScreen() {
         </div>
       </div>
 
+      {/* Reminders */}
+      {reminders.length > 0 && (
+        <div className="max-w-4xl mx-auto px-8 mt-4">
+          <div className="space-y-2">
+            {reminders.map(r => (
+              <div key={r.id} className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                <Bell size={15} className="text-amber-500 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-amber-900">
+                    Reminder: <span className="font-bold">{r.groupName}</span>
+                  </p>
+                  <p className="text-xs text-amber-700 mt-0.5">Next session: {r.sessionText}</p>
+                </div>
+                <button
+                  onClick={() => navigate('group-detail', { groupId: r.groupId })}
+                  className="text-xs font-semibold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-xl transition-colors flex-shrink-0"
+                >
+                  Open Group
+                </button>
+                <button onClick={() => removeReminder(r.id)} className="text-amber-400 hover:text-amber-600 flex-shrink-0">
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Content grid */}
-      <div className="max-w-4xl mx-auto px-8 -mt-8 pb-10">
+      <div className={`max-w-4xl mx-auto px-8 pb-10 ${reminders.length > 0 ? 'mt-4' : '-mt-8'}`}>
         <div className="grid grid-cols-3 gap-5">
           {/* Schedule Widget — spans 2 cols */}
           <div className="col-span-2 bg-white rounded-3xl shadow-sm p-5">

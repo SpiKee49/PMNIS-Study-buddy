@@ -1,6 +1,6 @@
+import { useRef } from 'react'
 import { useNav } from '../../context/NavigationContext'
-import { ChevronLeft, Upload, FileText, Code, Presentation, File, Plus, MoreHorizontal } from 'lucide-react'
-import { groups, workspaceFiles } from '../../data/dummy'
+import { ChevronLeft, Upload, FileText, Code, Presentation, File, Plus, MoreHorizontal, Trash2 } from 'lucide-react'
 
 const fileIcons = {
   pdf: { icon: FileText, color: 'bg-rose-100 text-rose-600' },
@@ -9,9 +9,49 @@ const fileIcons = {
   doc: { icon: FileText, color: 'bg-blue-100 text-blue-600' },
 }
 
+// Guess file type from extension
+function guessType(name) {
+  const ext = name.split('.').pop().toLowerCase()
+  if (ext === 'pdf') return 'pdf'
+  if (['js', 'ts', 'py', 'java', 'c', 'cpp', 'cs'].includes(ext)) return 'code'
+  if (['ppt', 'pptx', 'key'].includes(ext)) return 'slides'
+  return 'doc'
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return '—'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 export default function WorkspaceScreen() {
-  const { params, goBack } = useNav()
-  const group = groups.find(g => g.id === params.groupId) || groups[0]
+  const { params, goBack, allGroups, groupWorkspaceFiles, uploadGroupFile } = useNav()
+  const group = allGroups.find(g => g.id === params.groupId) || allGroups[0]
+  const fileInputRef = useRef(null)
+
+  const files = groupWorkspaceFiles[group?.id] ?? groupWorkspaceFiles.global ?? []
+
+  const totalBytes = files.reduce((sum, f) => {
+    const raw = typeof f.sizeBytes === 'number' ? f.sizeBytes : 0
+    return sum + raw
+  }, 0)
+  const usedMB = (15.8 + totalBytes / (1024 * 1024)).toFixed(1)
+  const usedPct = Math.min(100, Math.round((parseFloat(usedMB) / 100) * 100))
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    uploadGroupFile(group.id, {
+      name: file.name,
+      size: formatBytes(file.size),
+      sizeBytes: file.size,
+      type: guessType(file.name),
+    })
+    e.target.value = ''
+  }
+
+  if (!group) return null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,9 +67,18 @@ export default function WorkspaceScreen() {
         <span className="text-gray-300">/</span>
         <span className="text-sm font-semibold text-gray-700">Workspace</span>
         <div className="flex-1" />
-        <button className="flex items-center gap-2 bg-violet-600 text-white text-sm font-semibold px-4 py-2 rounded-xl">
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center gap-2 bg-violet-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-violet-700 transition-colors"
+        >
           <Upload size={14} /> Upload File
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+        />
       </div>
 
       <div className="max-w-4xl mx-auto px-8 py-6">
@@ -37,10 +86,10 @@ export default function WorkspaceScreen() {
         <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-semibold text-gray-700">Storage Used</p>
-            <p className="text-xs text-gray-500">15.8 MB / 100 MB</p>
+            <p className="text-xs text-gray-500">{usedMB} MB / 100 MB</p>
           </div>
           <div className="h-2 bg-gray-100 rounded-full">
-            <div className="h-2 bg-violet-500 rounded-full" style={{ width: '16%' }} />
+            <div className="h-2 bg-violet-500 rounded-full transition-all" style={{ width: `${usedPct}%` }} />
           </div>
         </div>
 
@@ -54,7 +103,7 @@ export default function WorkspaceScreen() {
           ].map(a => {
             const Icon = a.icon
             return (
-              <button key={a.label} className="flex flex-col items-center gap-1.5 py-3 bg-white rounded-2xl shadow-sm">
+              <button key={a.label} className="flex flex-col items-center gap-1.5 py-3 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
                 <div className={`w-9 h-9 ${a.color} rounded-xl flex items-center justify-center`}>
                   <Icon size={16} />
                 </div>
@@ -66,16 +115,30 @@ export default function WorkspaceScreen() {
 
         {/* Files */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
+          <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-bold text-sm text-gray-800">Shared Files</h2>
+            <span className="text-xs text-gray-400">{files.length} file{files.length !== 1 ? 's' : ''}</span>
           </div>
-          {workspaceFiles.map((file, i) => {
+
+          {files.length === 0 && (
+            <div className="py-12 text-center">
+              <p className="text-sm text-gray-400">No files yet.</p>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="mt-3 text-xs text-violet-600 font-semibold hover:underline"
+              >
+                Upload the first file
+              </button>
+            </div>
+          )}
+
+          {files.map((file, i) => {
             const fileType = fileIcons[file.type] || { icon: File, color: 'bg-gray-100 text-gray-500' }
             const Icon = fileType.icon
             return (
               <div
                 key={file.id}
-                className={`flex items-center gap-3 px-4 py-3 ${i < workspaceFiles.length - 1 ? 'border-b border-gray-50' : ''}`}
+                className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${i < files.length - 1 ? 'border-b border-gray-50' : ''}`}
               >
                 <div className={`w-10 h-10 ${fileType.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
                   <Icon size={18} />
@@ -91,6 +154,15 @@ export default function WorkspaceScreen() {
             )
           })}
         </div>
+
+        {/* Drop zone hint */}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full mt-4 py-4 border-2 border-dashed border-gray-200 rounded-2xl text-sm text-gray-400 hover:border-violet-300 hover:text-violet-500 transition-colors flex items-center justify-center gap-2"
+        >
+          <Upload size={15} />
+          Drop files here or click to upload
+        </button>
       </div>
     </div>
   )

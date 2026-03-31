@@ -21,21 +21,21 @@ const tabScreens = {
 }
 
 export default function Sidebar({ active }) {
-  const { navigate, studyCoins, conversations } = useNav()
+  const { navigate, studyCoins, conversations, darkMode } = useNav()
   const activeTab = tabScreens[active] || 'home'
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unread, 0)
 
   return (
-    <aside className="w-60 shrink-0 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0">
+    <aside className={`w-60 shrink-0 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} border-r flex flex-col h-screen sticky top-0`}>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100">
+      <div className={`px-5 py-5 ${darkMode ? 'border-gray-700' : 'border-gray-100'} border-b`}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
             <BookOpen size={18} className="text-white" strokeWidth={1.8} />
           </div>
           <div>
-            <p className="font-bold text-gray-900 text-sm leading-none">Study Buddy</p>
-            <p className="text-[11px] text-gray-400 mt-0.5">Learn together</p>
+            <p className={`font-bold ${darkMode ? 'text-gray-100' : 'text-gray-900'} text-sm leading-none`}>Study Buddy</p>
+            <p className={`text-[11px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} mt-0.5`}>Learn together</p>
           </div>
         </div>
       </div>
@@ -53,8 +53,8 @@ export default function Sidebar({ active }) {
               onClick={() => navigate(item.screen)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left ${
                 isActive
-                  ? 'bg-violet-50 text-violet-700'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+                  ? darkMode ? 'bg-violet-900/40 text-violet-400' : 'bg-violet-50 text-violet-700'
+                  : darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-gray-200' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
               }`}
             >
               <Icon
@@ -77,32 +77,38 @@ export default function Sidebar({ active }) {
       </nav>
 
       {/* User card at bottom */}
-      <div className="px-3 py-3 border-t border-gray-100 space-y-3">
+      <div className={`px-3 py-3 ${darkMode ? 'border-gray-700' : 'border-gray-100'} border-t space-y-3`}>
         {/* Coins Display */}
         <button
           onClick={() => navigate('coins-store')}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-amber-100 to-yellow-100 hover:from-amber-200 hover:to-yellow-200 transition-all border border-amber-200"
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all border ${
+            darkMode
+              ? 'bg-amber-900/30 border-amber-800/50 hover:bg-amber-800/40'
+              : 'bg-gradient-to-r from-amber-100 to-yellow-100 hover:from-amber-200 hover:to-yellow-200 border-amber-200'
+          }`}
         >
-          <Coins size={16} className="text-amber-600 flex-shrink-0" />
+          <Coins size={16} className={`${darkMode ? 'text-amber-500' : 'text-amber-600'} flex-shrink-0`} />
           <div className="flex-1 text-left">
-            <p className="text-xs text-amber-700 font-semibold">Study Coins</p>
-            <p className="text-sm font-bold text-amber-900">{studyCoins}</p>
+            <p className={`text-xs font-semibold ${darkMode ? 'text-amber-400' : 'text-amber-700'}`}>Study Coins</p>
+            <p className={`text-sm font-bold ${darkMode ? 'text-amber-300' : 'text-amber-900'}`}>{studyCoins}</p>
           </div>
         </button>
 
         {/* User card */}
         <button
           onClick={() => navigate('settings')}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group ${
+            darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+          }`}
         >
           <div className={`w-8 h-8 ${currentUser.avatarColor} rounded-full flex items-center justify-center flex-shrink-0`}>
             <span className="text-xs font-bold text-white">{currentUser.avatar}</span>
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p className="text-sm font-semibold text-gray-800 truncate">{currentUser.name}</p>
-            <p className="text-[11px] text-gray-400 truncate">{currentUser.username}</p>
+            <p className={`text-sm font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-800'} truncate`}>{currentUser.name}</p>
+            <p className={`text-[11px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} truncate`}>{currentUser.username}</p>
           </div>
-          <Settings size={14} className="text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
+          <Settings size={14} className={`${darkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-gray-600'} flex-shrink-0`} />
         </button>
       </div>
     </aside>

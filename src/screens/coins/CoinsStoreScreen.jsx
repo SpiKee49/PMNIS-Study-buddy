@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { ChevronLeft, Coins, Check } from 'lucide-react'
-import { studyCoinsStore, studySessionTemplates } from '../../data/dummy'
+import { studyCoinsStore } from '../../data/dummy'
 
 export default function CoinsStoreScreen() {
   const { navigate, goBack, studyCoins, spendCoins, hasUnlocked, coinsPurchased } = useNav()
@@ -128,44 +128,6 @@ export default function CoinsStoreScreen() {
             </div>
           ))}
         </div>
-
-        {/* Study Templates Section - Show if unlocked */}
-        {hasUnlocked('study-templates') && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              📋 Study Session Templates
-            </h2>
-            <div className="space-y-4">
-              {studySessionTemplates.map(template => (
-                <div key={template.id} className="bg-white rounded-2xl p-6 border border-gray-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">{template.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{template.description}</p>
-                    </div>
-                    <span className="bg-violet-100 text-violet-700 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap">
-                      {template.duration}
-                    </span>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    {template.breakdown.map((phase, idx) => (
-                      <div key={idx} className="flex items-center gap-3 mb-2 last:mb-0">
-                        <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">
-                          {idx + 1}
-                        </div>
-                        <div className="flex-1 flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-900">{phase.phase}</span>
-                          <span className="text-xs text-gray-500">{phase.time}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

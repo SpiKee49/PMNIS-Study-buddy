@@ -1,13 +1,37 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { ChevronLeft, Send, Paperclip, Smile, Users } from 'lucide-react'
-import { groups, groupMessages } from '../../data/dummy'
+
+const EMOJIS = ['😄', '👍', '🔥', '📚', '💡', '🚀', '✅', '❓']
 
 export default function GroupChatScreen() {
-  const { params, navigate, goBack } = useNav()
-  const group = groups.find(g => g.id === params.groupId) || groups[0]
-  const messages = groupMessages[group.id] || []
+  const { params, navigate, goBack, allGroups, groupMessages, sendGroupMessage } = useNav()
+  const group = allGroups.find(g => g.id === params.groupId) || allGroups[0]
+  const messages = groupMessages[group?.id] || []
   const [input, setInput] = useState('')
+  const [showEmoji, setShowEmoji] = useState(false)
+  const bottomRef = useRef(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleSend = () => {
+    const text = input.trim()
+    if (!text) return
+    sendGroupMessage(group.id, text)
+    setInput('')
+    setShowEmoji(false)
+  }
+
+  const handleKey = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  if (!group) return null
 
   return (
     <div className="flex flex-col bg-gray-50" style={{ height: '100vh' }}>
@@ -33,7 +57,6 @@ export default function GroupChatScreen() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-8 py-4 space-y-3 max-w-4xl mx-auto w-full">
-        {/* Date divider */}
         <div className="flex items-center gap-3 my-2">
           <div className="flex-1 h-px bg-gray-200" />
           <span className="text-[10px] text-gray-400 font-medium">Today</span>
@@ -65,10 +88,26 @@ export default function GroupChatScreen() {
             </div>
           )
         })}
+        <div ref={bottomRef} />
       </div>
 
+      {/* Emoji picker */}
+      {showEmoji && (
+        <div className="bg-white border-t border-gray-100 px-8 py-2 flex gap-2 max-w-4xl mx-auto w-full">
+          {EMOJIS.map(e => (
+            <button
+              key={e}
+              onClick={() => setInput(prev => prev + e)}
+              className="text-xl hover:scale-110 transition-transform"
+            >
+              {e}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input */}
-      <div className="bg-white border-t border-gray-100 px-8 py-3 flex items-center gap-3 flex-shrink-0">
+      <div className="bg-white border-t border-gray-100 px-8 py-3 flex items-center gap-3 flex-shrink-0 max-w-4xl mx-auto w-full">
         <button className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center">
           <Paperclip size={16} className="text-gray-500" />
         </button>
@@ -77,16 +116,21 @@ export default function GroupChatScreen() {
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKey}
             placeholder="Type a message..."
             className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
           />
-          <button>
-            <Smile size={16} className="text-gray-400" />
+          <button onClick={() => setShowEmoji(v => !v)}>
+            <Smile size={16} className={showEmoji ? 'text-violet-500' : 'text-gray-400'} />
           </button>
         </div>
-        <button className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-          input.trim() ? 'bg-violet-600' : 'bg-gray-100'
-        }`}>
+        <button
+          onClick={handleSend}
+          disabled={!input.trim()}
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+            input.trim() ? 'bg-violet-600' : 'bg-gray-100'
+          }`}
+        >
           <Send size={15} className={input.trim() ? 'text-white' : 'text-gray-400'} />
         </button>
       </div>

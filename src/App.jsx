@@ -49,7 +49,13 @@ import SettingsScreen from './screens/profile/SettingsScreen'
 // Workspace
 import MyWorkspaceScreen from './screens/workspace/MyWorkspaceScreen'
 import SubjectDetailScreen from './screens/workspace/SubjectDetailScreen'
+import FlashcardsScreen from './screens/workspace/FlashcardsScreen'
 import PracticeSessionScreen from './screens/workspace/PracticeSessionScreen'
+import SummaryScreen from './screens/workspace/SummaryScreen'
+import QuickFlashcardsScreen from './screens/workspace/QuickFlashcardsScreen'
+import QuickPracticeScreen from './screens/workspace/QuickPracticeScreen'
+import QuickSummaryScreen from './screens/workspace/QuickSummaryScreen'
+import WeakAreaMatchScreen from './screens/workspace/WeakAreaMatchScreen'
 
 const screenMap = {
   splash: SplashScreen,
@@ -81,7 +87,13 @@ const screenMap = {
   settings: SettingsScreen,
   'my-workspace': MyWorkspaceScreen,
   'subject-detail': SubjectDetailScreen,
+  'flashcards': FlashcardsScreen,
   'practice-session': PracticeSessionScreen,
+  'summary': SummaryScreen,
+  'quick-flashcards': QuickFlashcardsScreen,
+  'quick-practice': QuickPracticeScreen,
+  'quick-summary': QuickSummaryScreen,
+  'weak-area-match': WeakAreaMatchScreen,
 }
 
 const authScreens = new Set([
@@ -92,7 +104,7 @@ const authScreens = new Set([
 ])
 
 function Router() {
-  const { screen } = useNav()
+  const { screen, darkMode } = useNav()
   const Screen = screenMap[screen] || HomeScreen
 
   if (screen === 'splash') {
@@ -105,8 +117,8 @@ function Router() {
 
   if (authScreens.has(screen)) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 flex items-center justify-center p-6">
-        <div key={screen} className="w-full max-w-lg bg-white rounded-3xl shadow-xl overflow-hidden screen-enter">
+      <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-violet-50 via-white to-indigo-50'} flex items-center justify-center p-6`}>
+        <div key={screen} className={`w-full max-w-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-3xl shadow-xl overflow-hidden screen-enter`}>
           <Screen />
         </div>
       </div>
@@ -114,9 +126,9 @@ function Router() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className={`flex min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <Sidebar active={screen} />
-      <main className="flex-1 overflow-y-auto min-h-screen">
+      <main className={`flex-1 overflow-y-auto min-h-screen ${darkMode ? 'dark' : ''}`}>
         <div key={screen} className="screen-enter h-full">
           <Screen />
         </div>

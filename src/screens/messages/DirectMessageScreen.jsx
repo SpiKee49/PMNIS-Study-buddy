@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { ChevronLeft, Phone, Video, Send, Paperclip, Smile, MoreVertical } from 'lucide-react'
 import { directMessages, students } from '../../data/dummy'
@@ -68,23 +68,53 @@ export default function DirectMessageScreen() {
   }
   
   // Get existing messages or create initial messages for new conversations
-  const existingMessages = directMessages[conv.id] || []
-  const initialMessages = existingMessages.length === 0 ? [
-    {
-      id: 'welcome1',
-      fromMe: true,
-      text: `Hi ${conv.name}! Thanks for connecting. I'm looking forward to studying together!`,
-      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+  const getInitialMessages = () => {
+    const existingMessages = directMessages[conv.id] || []
+    if (existingMessages.length > 0) {
+      return existingMessages
     }
-  ] : []
-  
-  const messages = existingMessages.length > 0 ? existingMessages : initialMessages
+    return [
+      {
+        id: 'welcome1',
+        fromMe: true,
+        text: `Hi ${conv.name}! Thanks for connecting. I'm looking forward to studying together!`,
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      }
+    ]
+  }
+
+  const [messages, setMessages] = useState(getInitialMessages())
   const [input, setInput] = useState('')
+  const bottomRef = useRef(null)
   const [showScheduler, setShowScheduler] = useState(false)
   const [showPhoneOptions, setShowPhoneOptions] = useState(false)
   const [showCall, setShowCall] = useState(false)
   const [showFeedback, setShowFeedback] = useState(false)
   const [meetingScheduled, setMeetingScheduled] = useState(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleSend = () => {
+    const text = input.trim()
+    if (!text) return
+    const newMsg = {
+      id: `m${Date.now()}`,
+      fromMe: true,
+      text,
+      time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    }
+    setMessages(prev => [...prev, newMsg])
+    setInput('')
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
 
   const handleScheduleMeeting = (meetingData) => {
     setMeetingScheduled(meetingData)
@@ -222,6 +252,8 @@ export default function DirectMessageScreen() {
           </div>
         ))}
 
+        <div ref={bottomRef} />
+
       {/* Typing indicator */}
         {conv.online && (
           <div className="flex items-end gap-2">
@@ -272,6 +304,7 @@ export default function DirectMessageScreen() {
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Message..."
             className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
           />
@@ -279,9 +312,13 @@ export default function DirectMessageScreen() {
             <Smile size={16} className="text-gray-400" />
           </button>
         </div>
-        <button className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-          input.trim() ? 'bg-violet-600 hover:bg-violet-700' : 'bg-gray-100'
-        }`}>
+        <button
+          onClick={handleSend}
+          disabled={!input.trim()}
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+            input.trim() ? 'bg-violet-600 hover:bg-violet-700' : 'bg-gray-100'
+          }`}
+        >
           <Send size={15} className={input.trim() ? 'text-white' : 'text-gray-400'} />
         </button>
       </div>
