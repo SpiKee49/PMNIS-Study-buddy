@@ -134,7 +134,10 @@ export default function HomeScreen() {
                     <p className="text-sm font-bold text-gray-700">{s.time}</p>
                     <p className="text-xs text-gray-400">{s.day}</p>
                   </div>
-                  <button className="text-xs font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-xl flex-shrink-0">
+                  <button
+                    onClick={() => navigate('my-workspace', { joinedSession: s })}
+                    className="text-xs font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-xl flex-shrink-0"
+                  >
                     Join
                   </button>
                 </div>

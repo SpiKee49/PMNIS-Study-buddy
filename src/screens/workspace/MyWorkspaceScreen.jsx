@@ -3,7 +3,8 @@ import { ChevronLeft, Search, Plus, X, Trash2, Sparkles } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 
 export default function MyWorkspaceScreen() {
-  const { navigate, reset, mySubjects, addSubject, removeSubject, addFlashcardDeck, addPracticeTest, summaryOnboarding, setSummaryOnboarding } = useNav()
+  const { navigate, reset, params, mySubjects, addSubject, removeSubject, addFlashcardDeck, addPracticeTest, summaryOnboarding, setSummaryOnboarding } = useNav()
+  const joinedSession = params?.joinedSession || null
   const [query, setQuery] = useState('')
   const [showAddSubject, setShowAddSubject] = useState(false)
   const [newSubjectName, setNewSubjectName] = useState('')
@@ -56,6 +57,20 @@ export default function MyWorkspaceScreen() {
           <span className="text-sm font-semibold text-gray-900">My Workspace</span>
         </div>
       </div>
+
+      {/* Joined session banner */}
+      {joinedSession && (
+        <div className="bg-violet-50 border-b border-violet-100 px-8 py-3">
+          <div className="max-w-5xl mx-auto flex items-center gap-2">
+            <span className="text-base">🟢</span>
+            <p className="text-sm font-semibold text-violet-800">
+              Joined: <span className="font-bold">{joinedSession.title}</span>
+              {joinedSession.subtitle && <span className="font-normal text-violet-600"> · {joinedSession.subtitle}</span>}
+            </p>
+            <span className="ml-auto text-xs text-violet-500">{joinedSession.time} · {joinedSession.day}</span>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-8 py-6">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronLeft, Upload, FileText, Folder, Plus, X, Check, ClipboardList } from 'lucide-react'
+import { ChevronLeft, Upload, FileText, Folder, Plus, X, Check, ClipboardList, Users } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import { sampleQuestions } from '../../data/dummy'
 
@@ -209,9 +209,42 @@ export default function QuickPracticeScreen() {
             </div>
 
             {isFinished ? (
-              <div className="text-center py-10">
-                <p className="text-3xl font-bold text-gray-900 mb-1">{correct}/{questions.length}</p>
-                <p className="text-sm text-gray-500 mb-5">questions correct</p>
+              <div className="py-6">
+                <div className="text-center mb-6">
+                  <p className="text-3xl font-bold text-gray-900 mb-1">{correct}/{questions.length}</p>
+                  <p className="text-sm text-gray-500">questions correct</p>
+                </div>
+
+                {(() => {
+                  const weakTopics = [...new Set(
+                    answers
+                      .filter(a => !a.correct)
+                      .map(a => questions.find(q => q.id === a.questionId)?.topic)
+                      .filter(Boolean)
+                  )]
+                  return weakTopics.length > 0 ? (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-5">
+                      <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2">Areas to improve</p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {weakTopics.map(t => (
+                          <span key={t} className="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">{t}</span>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => navigate('weak-area-match', { weakTopics })}
+                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
+                      >
+                        <Users size={13} />
+                        Find a Study Partner for these topics
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-5 text-center">
+                      <p className="text-sm font-semibold text-emerald-700">Perfect score! No weak areas detected.</p>
+                    </div>
+                  )
+                })()}
+
                 <button
                   onClick={() => {
                     setCurrentQuestion(0)
@@ -220,7 +253,7 @@ export default function QuickPracticeScreen() {
                     setAnswers([])
                     setIsFinished(false)
                   }}
-                  className="px-6 py-2.5 bg-amber-500 text-white font-semibold rounded-xl text-sm"
+                  className="w-full px-6 py-2.5 bg-amber-500 text-white font-semibold rounded-xl text-sm"
                 >
                   Retry
                 </button>

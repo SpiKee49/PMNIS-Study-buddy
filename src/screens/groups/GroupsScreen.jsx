@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Users, Clock, X, ChevronRight, Check, Search } from 'lucide-react'
+import { Plus, Users, Clock, X, ChevronRight, Check, Search, Compass } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import { students } from '../../data/dummy'
 
