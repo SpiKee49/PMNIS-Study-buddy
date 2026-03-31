@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNav } from '../../context/NavigationContext'
-import { ChevronLeft, ChevronRight, Bell, Eye, Lock, Palette, HelpCircle, LogOut, Moon, Globe, Trash2, Check } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Bell, Eye, Lock, Palette, HelpCircle, LogOut, Moon, Globe, Trash2, Check, Send } from 'lucide-react'
 
 function Toggle({ on, onToggle }) {
   return (
@@ -19,6 +19,9 @@ export default function SettingsScreen() {
   const [showLanguageModal, setShowLanguageModal] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showVisibilityModal, setShowVisibilityModal] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [feedbackText, setFeedbackText] = useState('')
+  const [feedbackSent, setFeedbackSent] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState(false)
@@ -94,7 +97,7 @@ export default function SettingsScreen() {
       title: 'Support',
       items: [
         { icon: HelpCircle, label: 'Help Center', type: 'arrow' },
-        { icon: HelpCircle, label: 'Send Feedback', type: 'arrow' },
+        { icon: HelpCircle, label: 'Send Feedback', type: 'arrow', onClick: () => setShowFeedbackModal(true) },
       ],
     },
   ]
@@ -123,7 +126,7 @@ export default function SettingsScreen() {
                   <button
                     key={item.label}
                     onClick={item.onClick}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 ${i < section.items.length - 1 ? darkMode ? 'border-b border-gray-600' : 'border-b border-gray-50' : ''} transition-colors ${item.onClick ? darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50' : ''}`}
+                    className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${i < section.items.length - 1 ? darkMode ? 'border-b border-gray-600' : 'border-b border-gray-50' : ''} transition-colors ${item.onClick ? darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50' : ''}`}
                   >
                     <div className={`w-8 h-8 ${darkMode ? 'bg-gray-600' : 'bg-gray-100'} rounded-xl flex items-center justify-center flex-shrink-0`}>
                       <Icon size={15} className={darkMode ? 'text-gray-400' : 'text-gray-600'} />
@@ -240,6 +243,62 @@ export default function SettingsScreen() {
             >
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Send Feedback Modal */}
+      {showFeedbackModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className={`${darkMode ? 'bg-gray-700' : 'bg-white'} rounded-3xl p-6 w-full max-w-sm shadow-xl`}>
+            <h3 className={`text-lg font-bold ${darkMode ? 'text-gray-100' : 'text-gray-900'} mb-1`}>Send Feedback</h3>
+            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>Help us improve Study Buddy</p>
+            {feedbackSent ? (
+              <div className="text-center py-8">
+                <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Check size={28} className="text-emerald-600" />
+                </div>
+                <p className={`font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>Thank you!</p>
+                <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Your feedback has been sent.</p>
+              </div>
+            ) : (
+              <>
+                <textarea
+                  value={feedbackText}
+                  onChange={e => setFeedbackText(e.target.value)}
+                  placeholder="Share your thoughts, suggestions, or report an issue…"
+                  rows={5}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm resize-none focus:outline-none focus:border-violet-500 mb-4 ${
+                    darkMode
+                      ? 'bg-gray-600 border-gray-500 text-gray-100 placeholder-gray-400'
+                      : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
+                  }`}
+                />
+                <button
+                  onClick={() => {
+                    if (!feedbackText.trim()) return
+                    setFeedbackSent(true)
+                    setTimeout(() => {
+                      setShowFeedbackModal(false)
+                      setFeedbackSent(false)
+                      setFeedbackText('')
+                    }, 1800)
+                  }}
+                  disabled={!feedbackText.trim()}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-colors mb-2 bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-40"
+                >
+                  <Send size={15} /> Send Feedback
+                </button>
+                <button
+                  onClick={() => setShowFeedbackModal(false)}
+                  className={`w-full px-4 py-3 rounded-xl font-semibold transition-colors ${
+                    darkMode ? 'border border-gray-600 text-gray-200 hover:bg-gray-600' : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
