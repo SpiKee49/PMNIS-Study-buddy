@@ -77,11 +77,16 @@ export default function UserProfilePreviewScreen() {
             >
               <MessageCircle size={16} /> Message
             </button>
+            {!buddies.includes(student.id) && (
+              <div className="bg-amber-50 border border-amber-100 rounded-2xl p-3 text-xs text-amber-700 leading-relaxed">
+                <span className="font-semibold">Heads up:</span> Adding {student.name.split(' ')[0]} as a buddy lets them see your profile and contact you. You can remove them anytime.
+              </div>
+            )}
             <button
               onClick={handleAddBuddy}
               className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl font-semibold text-sm text-white shadow-md shadow-violet-200"
             >
-              <UserPlus size={16} /> Add Buddy
+              <UserPlus size={16} /> {buddies.includes(student.id) ? 'Already a Buddy' : 'Add Buddy'}
             </button>
           </div>
 

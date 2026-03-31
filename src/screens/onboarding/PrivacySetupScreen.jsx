@@ -3,8 +3,8 @@ import { useNav } from '../../context/NavigationContext'
 import { Eye, Users, Bell, MapPin } from 'lucide-react'
 
 const privacySettings = [
-  { id: 'profile', icon: Eye, label: 'Public Profile', description: 'Anyone can see your profile and subjects', defaultOn: true },
-  { id: 'discover', icon: Users, label: 'Discoverable', description: 'Appear in search results for study buddies', defaultOn: true },
+  { id: 'profile', icon: Eye, label: 'Public Profile', description: 'Anyone can see your profile and subjects', defaultOn: false },
+  { id: 'discover', icon: Users, label: 'Discoverable', description: 'Appear in search results for study buddies', defaultOn: false },
   { id: 'notifications', icon: Bell, label: 'Push Notifications', description: 'Session reminders and buddy requests', defaultOn: true },
   { id: 'location', icon: MapPin, label: 'Show University', description: 'Display your university on your profile', defaultOn: true },
 ]
@@ -64,10 +64,15 @@ export default function PrivacySetupScreen() {
         })}
 
         {/* Info card */}
-        <div className="bg-violet-50 rounded-2xl p-4 mt-2">
+        <div className="bg-violet-50 rounded-2xl p-4 mt-2 space-y-2">
+          <p className="text-xs text-violet-800 font-semibold">What does this mean for you?</p>
           <p className="text-xs text-violet-700 leading-relaxed">
-            <span className="font-semibold">Your data is safe.</span> We never share your personal information with third parties. You can change these settings anytime in your profile.
+            <span className="font-medium">Public profile + Discoverable</span> means other students can find and view your name, bio, subjects, and availability when searching for study partners.
           </p>
+          <p className="text-xs text-violet-700 leading-relaxed">
+            <span className="font-medium">Private profile</span> means only your existing buddies can see you. You won't appear in search results.
+          </p>
+          <p className="text-xs text-violet-500 mt-1">We never share your data with third parties or advertisers. You can change these settings anytime in your profile.</p>
         </div>
       </div>
 

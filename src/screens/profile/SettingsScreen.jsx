@@ -271,8 +271,11 @@ export default function SettingsScreen() {
       {showVisibilityModal && (
         <div className="fixed inset-0 z-50 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4">
           <div className={`${darkMode ? 'bg-gray-700' : 'bg-white'} rounded-3xl p-6 w-full max-w-sm shadow-xl`}>
-            <h3 className={`text-lg font-bold ${darkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Profile Visibility</h3>
-            <div className="space-y-2 mb-6">
+            <h3 className={`text-lg font-bold ${darkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>Profile Visibility</h3>
+            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-4 leading-relaxed`}>
+              Controls who can find and view your profile.
+            </p>
+            <div className="space-y-2 mb-4">
               {visibilityOptions.map(option => (
                 <button
                   key={option}
@@ -291,9 +294,12 @@ export default function SettingsScreen() {
                 </button>
               ))}
             </div>
-            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
-              {profileVisibility === 'Public' ? 'Your profile is visible to all users' : 'Your profile is only visible to your buddies'}
-            </p>
+            <div className={`rounded-xl p-3 mb-4 ${darkMode ? 'bg-gray-600' : 'bg-gray-50'}`}>
+              <p className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Public</span> — visible in Discover search to all students. Anyone can view your name, bio, subjects, and availability.<br/><br/>
+                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Private</span> — only your accepted buddies can view your profile. You won't appear in search results.
+              </p>
+            </div>
             <button
               onClick={() => setShowVisibilityModal(false)}
               className={`w-full px-4 py-3 rounded-xl font-semibold transition-colors ${

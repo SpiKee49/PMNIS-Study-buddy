@@ -5,6 +5,7 @@ import { ChevronLeft, User, Mail, Lock, GraduationCap, Eye, EyeOff } from 'lucid
 export default function SignUpScreen() {
   const { navigate, goBack } = useNav()
   const [showPassword, setShowPassword] = useState(false)
+  const [agreed, setAgreed] = useState(false)
 
   return (
     <div className="bg-white">
@@ -72,12 +73,28 @@ export default function SignUpScreen() {
           <p className="text-xs text-emerald-600 font-medium -mt-2">Good password strength</p>
         </div>
 
+        {/* Data use summary */}
+        <div className="bg-gray-50 rounded-2xl p-4 mt-4 border border-gray-100">
+          <p className="text-xs font-semibold text-gray-700 mb-1.5">What we collect & why</p>
+          <ul className="text-xs text-gray-500 space-y-1 leading-relaxed">
+            <li>• <span className="font-medium text-gray-600">Name, email, university</span> — to create your account</li>
+            <li>• <span className="font-medium text-gray-600">Subjects & availability</span> — to match you with study partners</li>
+            <li>• <span className="font-medium text-gray-600">Learning style & preferences</span> — to improve match quality</li>
+          </ul>
+          <p className="text-xs text-gray-400 mt-2">We do not sell your data. You control your visibility in Settings.</p>
+        </div>
+
         {/* Terms */}
-        <div className="flex items-start gap-3 mt-4">
-          <div className="w-5 h-5 rounded-md bg-violet-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
-              <path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+        <div
+          className="flex items-start gap-3 mt-4 cursor-pointer select-none"
+          onClick={() => setAgreed(v => !v)}
+        >
+          <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 border-2 transition-colors ${agreed ? 'bg-violet-600 border-violet-600' : 'border-gray-300 bg-white'}`}>
+            {agreed && (
+              <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+                <path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
             I agree to the{' '}
@@ -90,7 +107,8 @@ export default function SignUpScreen() {
         {/* Submit */}
         <button
           onClick={() => navigate('onboarding-learning-style')}
-          className="w-full mt-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200 active:scale-95 transition-transform"
+          disabled={!agreed}
+          className="w-full mt-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
         >
           Create Account
         </button>
