@@ -87,6 +87,16 @@ function convertToHTML(markdown) {
   return result.join('\n')
 }
 
+function generateSummary(files) {
+  if (files.length === 1) {
+    const file = files[0]
+    return materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
+  }
+  return files.map(file =>
+    materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
+  ).join('\n\n---\n\n')
+}
+
 // ── Sample data ──────────────────────────────────────────────────────────────
 
 const folderFiles = {
@@ -100,15 +110,6 @@ const folderFiles = {
   ],
 }
 
-function generateSummary(files) {
-  if (files.length === 1) {
-    const file = files[0]
-    return materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
-  }
-  return files.map(file => {
-    return materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
-  }).join('\n\n---\n\n')
-}
 
 // ── Screen ───────────────────────────────────────────────────────────────────
 
@@ -223,7 +224,7 @@ export default function QuickSummaryScreen() {
             disabled={selectedFiles.length === 0 || isGenerating}
             className="w-full py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold rounded-2xl disabled:opacity-40 transition-opacity"
           >
-            {isGenerating ? 'Generating summary…' : 'Generate Summary'}
+            {isGenerating ? 'Generating…' : 'Generate Summary'}
           </button>
         </div>
 
@@ -255,16 +256,14 @@ export default function QuickSummaryScreen() {
                     onClick={() => { setSummary(editDraft); setIsEditing(false) }}
                     className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-xl transition-colors"
                   >
-                    <Check size={15} />
-                    Save changes
+                    <Check size={15} /> Save changes
                   </button>
                 ) : (
                   <button
                     onClick={() => { setEditDraft(summary); setIsEditing(true) }}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-xl transition-colors"
                   >
-                    <Pencil size={15} />
-                    Edit
+                    <Pencil size={15} /> Edit
                   </button>
                 )}
                 {canExport ? (
