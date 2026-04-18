@@ -5,7 +5,7 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const timeSlots = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00']
 
 export default function AvailabilityScreen() {
-  const { navigate, goBack } = useNav()
+  const { navigate, goBack, updateUserProfile } = useNav()
   const [selected, setSelected] = useState(new Set(['Mon-14:00', 'Wed-10:00', 'Fri-16:00']))
 
   const toggle = (key) => {
@@ -84,7 +84,12 @@ export default function AvailabilityScreen() {
           Back
         </button>
         <button
-          onClick={() => navigate('onboarding-subjects')}
+          onClick={() => {
+            // Convert "Mon-14:00" format to "Mon 14:00" for profile display
+            const availability = [...selected].map(key => key.replace('-', ' '))
+            updateUserProfile({ availability })
+            navigate('onboarding-subjects')
+          }}
           className="flex-[2] bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200"
         >
           Continue

@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { ChevronLeft, MessageCircle, FolderOpen, Calendar, Bell, Check, X, Clock, UserPlus, Sparkles, FileText, File, Code2 } from 'lucide-react'
-import { students, currentUser } from '../../data/dummy'
+import { students } from '../../data/dummy'
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const TIMES = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
 
-function resolveMember(memberId, isFirst) {
+function resolveMember(memberId, isFirst, userProfile) {
   if (memberId === 'u0') {
     return {
       id: 'u0',
-      name: currentUser.name,
+      name: userProfile.name,
       role: isFirst ? 'Admin' : 'Member',
-      avatar: currentUser.avatar,
-      color: currentUser.avatarColor,
+      avatar: userProfile.avatar,
+      color: userProfile.avatarColor,
     }
   }
   const s = students.find(st => st.id === memberId)
@@ -23,7 +23,7 @@ function resolveMember(memberId, isFirst) {
 }
 
 export default function GroupDetailScreen() {
-  const { params, navigate, goBack, allGroups, joinGroup, leaveGroup, updateGroupSession, addReminder, reminders, groupMessages, groupWorkspaceFiles } = useNav()
+  const { params, navigate, goBack, allGroups, joinGroup, leaveGroup, updateGroupSession, addReminder, reminders, groupMessages, groupWorkspaceFiles, userProfile } = useNav()
   const group = allGroups.find(g => g.id === params.groupId) || allGroups[0]
 
   const [reminderSet, setReminderSet] = useState(() => reminders.some(r => r.groupId === group?.id))
@@ -36,7 +36,7 @@ export default function GroupDetailScreen() {
 
   if (!group) return null
 
-  const memberDetails = group.membersData.map((m, i) => resolveMember(m.id, i === 0))
+  const memberDetails = group.membersData.map((m, i) => resolveMember(m.id, i === 0, userProfile))
 
   const handleJoinLeave = () => {
     if (group.isJoined) {

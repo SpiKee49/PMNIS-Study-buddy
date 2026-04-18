@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft, FileText, BookOpen, Download, Lock } from 'lucide-react'
+import { ChevronLeft, FileText, BookOpen, Download, Lock, Pencil, Check } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
+import { materialSummaries } from '../../data/dummy'
 
 function renderInline(text) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g)
@@ -156,6 +157,8 @@ export default function SummaryScreen() {
 
   const [summaryDocument, setSummaryDocument] = useState('')
   const [isGenerating, setIsGenerating] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editDraft, setEditDraft] = useState('')
 
   const canExport = hasUnlocked('export-notes')
 
@@ -199,238 +202,14 @@ ${convertToHTML(summaryDocument)}
   }, [selectedMaterials])
 
   const generateSampleSummary = (selectedMaterials) => {
-    // Generate a comprehensive study guide combining all selected materials
-    const materialNames = selectedMaterials.map(m => m.name).join(', ')
-
-    const comprehensiveNotes = `# Study Guide: Machine Learning Fundamentals
-
-## Course Overview
-This comprehensive study guide covers key concepts from ${selectedMaterials.length} selected materials: ${materialNames}. The guide synthesizes fundamental machine learning principles, algorithms, and practical applications.
-
-## 1. Introduction to Machine Learning
-
-### Core Concepts
-Machine learning is a subset of artificial intelligence that enables systems to automatically learn and improve from experience without being explicitly programmed. The field encompasses three main types:
-
-- **Supervised Learning**: Learning from labeled training data to make predictions
-- **Unsupervised Learning**: Finding hidden patterns in unlabeled data
-- **Reinforcement Learning**: Learning through interaction with an environment
-
-### Key Terminology
-- **Features/Variables**: Input attributes used for prediction
-- **Target/Label**: Output variable we want to predict
-- **Training Data**: Dataset used to train the model
-- **Test Data**: Dataset used to evaluate model performance
-- **Overfitting**: When a model performs well on training data but poorly on new data
-- **Underfitting**: When a model is too simple to capture underlying patterns
-
-## 2. Supervised Learning Algorithms
-
-### Linear Regression
-A fundamental algorithm for predicting continuous values.
-
-**Cost Function:**
-J(θ) = (1/2m) Σᵢ₌₁ᵐ (h_θ(x^(i)) - y^(i))²
-
-**Gradient Descent Update:**
-θ_j := θ_j - α ∂J/∂θ_j
-
-**Key Applications:**
-- House price prediction
-- Sales forecasting
-- Risk assessment
-
-### Logistic Regression
-Used for binary classification problems.
-
-**Sigmoid Function:**
-σ(z) = 1/(1 + e^(-z))
-
-**Hypothesis:**
-h_θ(x) = σ(θ^T x)
-
-**Decision Boundary:**
-- Class 1 if h_θ(x) ≥ 0.5
-- Class 0 if h_θ(x) < 0.5
-
-### Decision Trees
-Non-parametric supervised learning method used for classification and regression.
-
-**Advantages:**
-- Easy to interpret and visualize
-- Handles both numerical and categorical data
-- Requires little data preprocessing
-
-**Common Algorithms:**
-- ID3 (Iterative Dichotomiser 3)
-- C4.5 (successor to ID3)
-- CART (Classification and Regression Trees)
-
-## 3. Model Evaluation Metrics
-
-### Classification Metrics
-- **Accuracy**: (TP + TN) / (TP + TN + FP + FN)
-- **Precision**: TP / (TP + FP)
-- **Recall**: TP / (TP + FN)
-- **F1-Score**: 2 × (Precision × Recall) / (Precision + Recall)
-- **ROC-AUC**: Area under the Receiver Operating Characteristic curve
-
-### Regression Metrics
-- **Mean Absolute Error (MAE)**: Average absolute differences between predictions and actual values
-- **Mean Squared Error (MSE)**: Average squared differences between predictions and actual values
-- **Root Mean Squared Error (RMSE)**: Square root of MSE
-- **R² Score**: Proportion of variance explained by the model
-
-## 4. Neural Networks and Deep Learning
-
-### Artificial Neural Networks
-Inspired by biological neural networks in the human brain.
-
-**Components:**
-- **Input Layer**: Receives input features
-- **Hidden Layers**: Process information through weighted connections
-- **Output Layer**: Produces final predictions
-- **Activation Functions**: Introduce non-linearity (ReLU, sigmoid, tanh)
-
-### Backpropagation
-Algorithm for training neural networks by computing gradients and updating weights.
-
-**Chain Rule Application:**
-∂L/∂w = ∂L/∂a × ∂a/∂z × ∂z/∂w
-
-Where:
-- L = Loss function
-- a = Activation output
-- z = Weighted sum input
-- w = Weight parameter
-
-### Convolutional Neural Networks (CNNs)
-Specialized for image processing and computer vision tasks.
-
-**Key Layers:**
-- **Convolutional Layer**: Applies filters to detect features
-- **Pooling Layer**: Reduces spatial dimensions
-- **Fully Connected Layer**: Makes final classifications
-
-**Common Architectures:**
-- LeNet-5
-- AlexNet
-- VGGNet
-- ResNet
-- Inception
-
-### Recurrent Neural Networks (RNNs)
-Designed for sequential data processing.
-
-**Applications:**
-- Natural language processing
-- Time series prediction
-- Speech recognition
-
-**Variants:**
-- Long Short-Term Memory (LSTM)
-- Gated Recurrent Unit (GRU)
-
-## 5. Optimization Techniques
-
-### Gradient Descent Variants
-- **Batch Gradient Descent**: Uses entire dataset for each update
-- **Stochastic Gradient Descent (SGD)**: Updates weights using single training example
-- **Mini-batch Gradient Descent**: Compromise between batch and stochastic
-
-### Advanced Optimizers
-- **Momentum**: Accelerates convergence by adding fraction of previous update
-- **RMSProp**: Adapts learning rate for each parameter
-- **Adam**: Combines momentum and RMSProp with bias correction
-
-## 6. Practical Considerations
-
-### Data Preprocessing
-- **Feature Scaling**: Normalization and standardization
-- **Handling Missing Values**: Imputation techniques
-- **Categorical Encoding**: One-hot encoding, label encoding
-- **Feature Selection**: Removing irrelevant or redundant features
-
-### Model Validation
-- **Cross-Validation**: K-fold, stratified k-fold
-- **Train/Validation/Test Split**: 60/20/20 or 70/15/15 ratios
-- **Hyperparameter Tuning**: Grid search, random search, Bayesian optimization
-
-### Common Challenges
-- **Overfitting**: Use regularization, early stopping, dropout
-- **Underfitting**: Increase model complexity, add features
-- **Imbalanced Data**: SMOTE, class weighting, resampling
-- **Computational Complexity**: Feature selection, dimensionality reduction
-
-## 7. Applications and Case Studies
-
-### Computer Vision
-- Image classification (ImageNet)
-- Object detection (YOLO, SSD)
-- Facial recognition
-- Medical image analysis
-
-### Natural Language Processing
-- Sentiment analysis
-- Machine translation (Transformer models)
-- Text summarization
-- Chatbots and virtual assistants
-
-### Recommendation Systems
-- Collaborative filtering
-- Content-based filtering
-- Matrix factorization
-- Deep learning approaches
-
-## 8. Ethics and Best Practices
-
-### Bias and Fairness
-- **Algorithmic Bias**: Ensure training data represents diverse populations
-- **Fairness Metrics**: Demographic parity, equal opportunity
-- **Bias Detection**: Confusion matrix analysis, fairness-aware algorithms
-
-### Model Interpretability
-- **Feature Importance**: Understanding which features influence predictions
-- **SHAP Values**: Shapley Additive Explanations
-- **LIME**: Local Interpretable Model-agnostic Explanations
-
-### Deployment Considerations
-- **Model Monitoring**: Performance degradation detection
-- **A/B Testing**: Comparing model versions
-- **Continuous Learning**: Updating models with new data
-
-## Key Formulas and Equations
-
-### Statistics Fundamentals
-- **Mean**: μ = Σxᵢ/n
-- **Variance**: σ² = Σ(xᵢ - μ)²/n
-- **Standard Deviation**: σ = √σ²
-- **Covariance**: cov(X,Y) = Σ(xᵢ - μ_X)(yᵢ - μ_Y)/n
-
-### Probability
-- **Bayes' Theorem**: P(A|B) = P(B|A) × P(A)/P(B)
-- **Conditional Probability**: P(A∩B) = P(A|B) × P(B)
-
-### Information Theory
-- **Entropy**: H(X) = -Σ P(x) log₂ P(x)
-- **Cross-Entropy**: H(p,q) = -Σ p(x) log₂ q(x)
-
-## Study Tips and Best Practices
-
-1. **Start with Fundamentals**: Master basic concepts before advanced topics
-2. **Practice Regularly**: Implement algorithms from scratch
-3. **Work on Projects**: Apply concepts to real-world problems
-4. **Stay Updated**: Follow latest research and developments
-5. **Join Communities**: Participate in Kaggle, GitHub, research forums
-6. **Focus on Mathematics**: Strong foundation in linear algebra, calculus, probability
-7. **Experiment**: Try different algorithms and compare performance
-8. **Document Learning**: Keep notes and code repositories organized
-
----
-
-*This study guide was generated from ${selectedMaterials.length} selected materials. Review regularly and supplement with hands-on practice for best results.*`
-
-    return comprehensiveNotes
+    if (selectedMaterials.length === 1) {
+      const mat = selectedMaterials[0]
+      return materialSummaries[mat.id] || `# ${mat.name}\n\nNo specific summary available for this material.`
+    }
+    // Multiple materials: concatenate with dividers
+    return selectedMaterials.map(mat => {
+      return materialSummaries[mat.id] || `# ${mat.name}\n\nNo specific summary available for this material.`
+    }).join('\n\n---\n\n')
   }
 
   return (
@@ -495,31 +274,60 @@ Designed for sequential data processing.
                     </div>
                   </div>
 
-                  {canExport ? (
-                    <button
-                      onClick={handleDownloadPDF}
-                      className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
-                    >
-                      <Download size={15} />
-                      Download PDF
-                    </button>
-                  ) : (
-                    <div className="flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-2">
+                    {isEditing ? (
                       <button
-                        onClick={() => navigate('coins-store')}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-400 text-sm font-medium rounded-xl transition-colors"
+                        onClick={() => { setSummaryDocument(editDraft); setIsEditing(false) }}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl transition-colors"
                       >
-                        <Lock size={15} />
+                        <Check size={15} />
+                        Save changes
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => { setEditDraft(summaryDocument); setIsEditing(true) }}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-xl transition-colors"
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+                    )}
+
+                    {canExport ? (
+                      <button
+                        onClick={handleDownloadPDF}
+                        className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
+                      >
+                        <Download size={15} />
                         Download PDF
                       </button>
-                      <span className="text-xs text-gray-400">Unlock with <span className="text-amber-500 font-semibold">15 coins</span> in the Store</span>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex flex-col items-end gap-1">
+                        <button
+                          onClick={() => navigate('coins-store')}
+                          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-400 text-sm font-medium rounded-xl transition-colors"
+                        >
+                          <Lock size={15} />
+                          Download PDF
+                        </button>
+                        <span className="text-xs text-gray-400">Unlock with <span className="text-amber-500 font-semibold">15 coins</span> in the Store</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="prose prose-sm max-w-none">
-                  <MarkdownDocument content={summaryDocument} />
-                </div>
+                {isEditing ? (
+                  <textarea
+                    value={editDraft}
+                    onChange={e => setEditDraft(e.target.value)}
+                    className="w-full h-[60vh] px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-mono text-gray-800 leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    spellCheck={false}
+                  />
+                ) : (
+                  <div className="prose prose-sm max-w-none">
+                    <MarkdownDocument content={summaryDocument} />
+                  </div>
+                )}
               </div>
 
               <div className="bg-violet-50 border border-violet-200 rounded-2xl p-4">

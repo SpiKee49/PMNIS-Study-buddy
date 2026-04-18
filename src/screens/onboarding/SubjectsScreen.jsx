@@ -4,7 +4,7 @@ import { subjects } from '../../data/dummy'
 import { X } from 'lucide-react'
 
 export default function SubjectsScreen() {
-  const { navigate, goBack } = useNav()
+  const { navigate, goBack, updateUserProfile } = useNav()
   const [selected, setSelected] = useState(new Set(['Algorithms & Data Structures', 'Machine Learning', 'Databases', 'Web Development']))
 
   const toggle = (s) => {
@@ -79,7 +79,10 @@ export default function SubjectsScreen() {
           Back
         </button>
         <button
-          onClick={() => navigate('onboarding-privacy')}
+          onClick={() => {
+            updateUserProfile({ subjects: [...selected] })
+            navigate('onboarding-privacy')
+          }}
           className="flex-[2] bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200"
         >
           Continue

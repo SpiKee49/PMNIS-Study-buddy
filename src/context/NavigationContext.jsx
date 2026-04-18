@@ -27,6 +27,43 @@ export function NavigationProvider({ children }) {
   const [matchPreferences, setMatchPreferences] = useState(defaultMatchPreferences)
   const resetMatchPreferences = () => setMatchPreferences(defaultMatchPreferences)
   const [darkMode, setDarkMode] = useState(false)
+
+  // User profile — populated during registration and editable afterwards
+  const [userProfile, setUserProfile] = useState({
+    name: currentUser.name,
+    email: '',
+    username: currentUser.username,
+    avatar: currentUser.avatar,
+    avatarColor: currentUser.avatarColor,
+    university: currentUser.university,
+    faculty: currentUser.faculty,
+    year: currentUser.year,
+    bio: currentUser.bio,
+    subjects: [...currentUser.subjects],
+    learningStyle: currentUser.learningStyle,
+    availability: [...currentUser.availability],
+    studyVibe: 'Structured',
+    rating: currentUser.rating,
+    sessionsCount: currentUser.sessionsCount,
+    buddiesCount: currentUser.buddiesCount,
+  })
+
+  const updateUserProfile = (updates) => {
+    setUserProfile(prev => {
+      const next = { ...prev, ...updates }
+      if (updates.name) {
+        const parts = updates.name.trim().split(/\s+/)
+        next.avatar = parts.map(p => p[0]).join('').slice(0, 2).toUpperCase()
+        // Auto-generate username from name only if not manually set
+        if (!updates.username) {
+          const first = parts[0].toLowerCase().replace(/[^a-z0-9]/g, '')
+          const lastInitial = parts.length > 1 ? parts[parts.length - 1][0].toLowerCase().replace(/[^a-z0-9]/g, '') : ''
+          next.username = '@' + first + lastInitial
+        }
+      }
+      return next
+    })
+  }
   const [pushNotifications, setPushNotifications] = useState(true)
   const [profileVisibility, setProfileVisibility] = useState('Public')
   const [language, setLanguage] = useState('English')
@@ -196,9 +233,14 @@ export function NavigationProvider({ children }) {
     }
   }
 
-  const addPracticeTest = (subjectId, name) => {
+  const addPracticeTest = (subjectId, name, questions = null) => {
     if (!name || !name.trim()) return null
-    const newTest = { id: `pt${Date.now()}`, name: name.trim(), questionCount: 10 }
+    const newTest = {
+      id: `pt${Date.now()}`,
+      name: name.trim(),
+      questionCount: questions ? questions.length : 10,
+      ...(questions && { questions }),
+    }
     setSubjectPracticeTests(prev => ({
       ...prev,
       [subjectId]: [...(prev[subjectId] || []), newTest],
@@ -305,7 +347,7 @@ export function NavigationProvider({ children }) {
   const joinGroup = (groupId) => {
     setAllGroups(prev => prev.map(g =>
       g.id === groupId
-        ? { ...g, isJoined: true, memberCount: g.memberCount + 1, members: [...g.members, 'u0'], membersData: [...g.membersData, { id: 'u0', avatar: 'AJ', avatarColor: 'bg-violet-500' }] }
+        ? { ...g, isJoined: true, memberCount: g.memberCount + 1, members: [...g.members, 'u0'], membersData: [...g.membersData, { id: 'u0', avatar: userProfile.avatar, avatarColor: userProfile.avatarColor }] }
         : g
     ))
   }
@@ -346,9 +388,9 @@ export function NavigationProvider({ children }) {
     const newMsg = {
       id: `m${Date.now()}`,
       userId: 'u0',
-      userName: 'Alex',
-      avatar: 'AJ',
-      avatarColor: 'bg-violet-500',
+      userName: userProfile.name,
+      avatar: userProfile.avatar,
+      avatarColor: userProfile.avatarColor,
       text,
       time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
       type: 'text',
@@ -408,7 +450,7 @@ export function NavigationProvider({ children }) {
   }
 
   return (
-    <NavigationContext.Provider value={{ screen, params, navigate, goBack, reset, schedule, addToSchedule, buddies, addBuddy, removeBuddy, conversations, mySubjects, setMySubjects, addSubject, removeSubject, subjectMaterials, subjectFlashcardDecks, subjectPracticeTests, addMaterial, removeMaterial, addFlashcardDeck, removeFlashcardDeck, updateFlashcardDeck, addPracticeTest, removePracticeTest, studyCoins, addCoins, spendCoins, hasUnlocked, coinsPurchased, summaryOnboarding, setSummaryOnboarding, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage, allGroups, createGroup, joinGroup, leaveGroup, inviteToGroup, updateGroupSession, groupMessages, sendGroupMessage, groupWorkspaceFiles, uploadGroupFile, reminders, addReminder, removeReminder, matchPreferences, setMatchPreferences, resetMatchPreferences }}>
+    <NavigationContext.Provider value={{ screen, params, navigate, goBack, reset, schedule, addToSchedule, buddies, addBuddy, removeBuddy, conversations, mySubjects, setMySubjects, addSubject, removeSubject, subjectMaterials, subjectFlashcardDecks, subjectPracticeTests, addMaterial, removeMaterial, addFlashcardDeck, removeFlashcardDeck, updateFlashcardDeck, addPracticeTest, removePracticeTest, studyCoins, addCoins, spendCoins, hasUnlocked, coinsPurchased, summaryOnboarding, setSummaryOnboarding, darkMode, setDarkMode, pushNotifications, setPushNotifications, profileVisibility, setProfileVisibility, language, setLanguage, allGroups, createGroup, joinGroup, leaveGroup, inviteToGroup, updateGroupSession, groupMessages, sendGroupMessage, groupWorkspaceFiles, uploadGroupFile, reminders, addReminder, removeReminder, matchPreferences, setMatchPreferences, resetMatchPreferences, userProfile, updateUserProfile }}>
       {children}
     </NavigationContext.Provider>
   )

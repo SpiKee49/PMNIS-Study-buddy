@@ -3,9 +3,30 @@ import { useNav } from '../../context/NavigationContext'
 import { ChevronLeft, User, Mail, Lock, GraduationCap, Eye, EyeOff } from 'lucide-react'
 
 export default function SignUpScreen() {
-  const { navigate, goBack } = useNav()
+  const { navigate, goBack, updateUserProfile } = useNav()
   const [showPassword, setShowPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [university, setUniversity] = useState('')
+  const [password, setPassword] = useState('')
+
+  const passwordStrength = password.length === 0 ? 0
+    : password.length < 6 ? 1
+    : password.length < 10 ? 2
+    : password.match(/[A-Z]/) && password.match(/[0-9]/) ? 4
+    : 3
+
+  const strengthColors = ['bg-gray-200', 'bg-rose-400', 'bg-amber-400', 'bg-emerald-400', 'bg-emerald-500']
+  const strengthLabels = ['', 'Too short', 'Weak', 'Good', 'Strong']
+  const strengthTextColors = ['text-gray-400', 'text-rose-500', 'text-amber-600', 'text-emerald-600', 'text-emerald-600']
+
+  const handleCreate = () => {
+    updateUserProfile({ name, email, university })
+    navigate('onboarding-learning-style')
+  }
+
+  const canSubmit = agreed && name.trim() && email.trim() && university.trim() && password.length >= 6
 
   return (
     <div className="bg-white">
@@ -24,26 +45,50 @@ export default function SignUpScreen() {
       {/* Form */}
       <div className="px-8 pt-6 pb-8">
         <div className="space-y-4">
-          {[
-            { label: 'Full Name', icon: User, placeholder: 'Your full name', type: 'text', defaultValue: '' },
-            { label: 'Email', icon: Mail, placeholder: 'your@university.edu', type: 'email', defaultValue: '' },
-            { label: 'University', icon: GraduationCap, placeholder: 'e.g. Slovak University of Technology', type: 'text', defaultValue: '' },
-          ].map(field => (
-            <div key={field.label}>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">
-                {field.label}
-              </label>
-              <div className="relative">
-                <field.icon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type={field.type}
-                  defaultValue={field.defaultValue}
-                  className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
-                  placeholder={field.placeholder}
-                />
-              </div>
+          {/* Name */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Full Name</label>
+            <div className="relative">
+              <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
+                placeholder="Your full name"
+              />
             </div>
-          ))}
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
+            <div className="relative">
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
+                placeholder="your@university.edu"
+              />
+            </div>
+          </div>
+
+          {/* University */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">University</label>
+            <div className="relative">
+              <GraduationCap size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={university}
+                onChange={e => setUniversity(e.target.value)}
+                className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
+                placeholder="e.g. Slovak University of Technology"
+              />
+            </div>
+          </div>
 
           {/* Password */}
           <div>
@@ -52,6 +97,8 @@ export default function SignUpScreen() {
               <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
                 placeholder="Create a strong password"
               />
@@ -65,12 +112,16 @@ export default function SignUpScreen() {
           </div>
 
           {/* Password strength */}
-          <div className="flex gap-1.5">
-            {['bg-rose-400', 'bg-amber-400', 'bg-emerald-400', 'bg-gray-200'].map((c, i) => (
-              <div key={i} className={`h-1.5 flex-1 rounded-full ${c}`} />
-            ))}
-          </div>
-          <p className="text-xs text-emerald-600 font-medium -mt-2">Good password strength</p>
+          {password.length > 0 && (
+            <>
+              <div className="flex gap-1.5">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= passwordStrength ? strengthColors[passwordStrength] : 'bg-gray-200'}`} />
+                ))}
+              </div>
+              <p className={`text-xs font-medium -mt-2 ${strengthTextColors[passwordStrength]}`}>{strengthLabels[passwordStrength]}</p>
+            </>
+          )}
         </div>
 
         {/* Data use summary */}
@@ -106,8 +157,8 @@ export default function SignUpScreen() {
 
         {/* Submit */}
         <button
-          onClick={() => navigate('onboarding-learning-style')}
-          disabled={!agreed}
+          onClick={handleCreate}
+          disabled={!canSubmit}
           className="w-full mt-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
         >
           Create Account

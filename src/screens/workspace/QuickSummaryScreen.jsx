@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ChevronLeft, Upload, FileText, Folder, X, BookOpen, Download, Lock } from 'lucide-react'
+import { ChevronLeft, Upload, FileText, Folder, X, BookOpen, Download, Lock, Pencil, Check } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
+import { materialSummaries } from '../../data/dummy'
 
 // ── Markdown renderer ────────────────────────────────────────────────────────
 
@@ -100,62 +101,13 @@ const folderFiles = {
 }
 
 function generateSummary(files) {
-  const names = files.map(f => f.name).join(', ')
-  return `# Study Notes Summary
-
-## Overview
-This summary was generated from ${files.length} selected file${files.length > 1 ? 's' : ''}: ${names}.
-
-## Key Concepts
-
-### Core Ideas
-- **Definition**: A clear understanding of foundational terms and principles
-- **Scope**: The range of topics covered across the selected materials
-- **Relevance**: How the material connects to broader subject knowledge
-
-### Important Principles
-- **Principle 1**: Always start from first principles and build upward
-- **Principle 2**: Connect new knowledge to existing mental models
-- **Principle 3**: Identify patterns that repeat across different contexts
-
-## Main Topics Covered
-
-### Topic A — Fundamentals
-The fundamentals section introduces essential vocabulary and baseline concepts. Understanding these building blocks is critical before advancing to more complex material.
-
-**Key points:**
-- Terminology and definitions form the foundation
-- Core rules and exceptions must be memorised
-- Examples illustrate abstract ideas concretely
-
-### Topic B — Applied Methods
-Applied methods translate theoretical knowledge into practical techniques. This section focuses on step-by-step procedures and decision-making frameworks.
-
-**Key points:**
-- Follow structured problem-solving approaches
-- Identify which method applies to each problem type
-- Practice with varied examples to build fluency
-
-### Topic C — Advanced Topics
-Advanced topics build on the fundamentals and applied methods to tackle more complex scenarios, edge cases, and interdisciplinary connections.
-
-## Formulas & References
-
-- **Formula 1**: Result = Input × Factor + Constant
-- **Formula 2**: Efficiency = Output / Input × 100%
-- **Rule of thumb**: When in doubt, return to the definition
-
-## Summary of Key Takeaways
-
-1. Master the fundamentals before moving to advanced topics
-2. Practice applying concepts to varied problem types
-3. Review formulas and definitions regularly
-4. Connect material across topics to build a complete picture
-5. Use active recall rather than passive re-reading
-
----
-
-*Generated from ${files.length} file${files.length > 1 ? 's' : ''}. Review and supplement with your own notes for best results.*`
+  if (files.length === 1) {
+    const file = files[0]
+    return materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
+  }
+  return files.map(file => {
+    return materialSummaries[file.id] || `# ${file.name}\n\nNo specific summary available for this file.`
+  }).join('\n\n---\n\n')
 }
 
 // ── Screen ───────────────────────────────────────────────────────────────────
@@ -167,6 +119,8 @@ export default function QuickSummaryScreen() {
   const [selectedFiles, setSelectedFiles] = useState([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [summary, setSummary] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editDraft, setEditDraft] = useState('')
 
   const canExport = hasUnlocked('export-notes')
 
@@ -295,31 +249,59 @@ export default function QuickSummaryScreen() {
                 </div>
               </div>
 
-              {canExport ? (
-                <button
-                  onClick={handleDownloadPDF}
-                  className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
-                >
-                  <Download size={15} />
-                  Download PDF
-                </button>
-              ) : (
-                <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2">
+                {isEditing ? (
                   <button
-                    onClick={() => navigate('coins-store')}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-400 text-sm font-medium rounded-xl transition-colors"
+                    onClick={() => { setSummary(editDraft); setIsEditing(false) }}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-xl transition-colors"
                   >
-                    <Lock size={15} />
+                    <Check size={15} />
+                    Save changes
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { setEditDraft(summary); setIsEditing(true) }}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-xl transition-colors"
+                  >
+                    <Pencil size={15} />
+                    Edit
+                  </button>
+                )}
+                {canExport ? (
+                  <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-xl transition-colors"
+                  >
+                    <Download size={15} />
                     Download PDF
                   </button>
-                  <span className="text-xs text-gray-400">Unlock with <span className="text-amber-500 font-semibold">15 coins</span> in the Store</span>
-                </div>
-              )}
+                ) : (
+                  <div className="flex flex-col items-end gap-1">
+                    <button
+                      onClick={() => navigate('coins-store')}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-400 text-sm font-medium rounded-xl transition-colors"
+                    >
+                      <Lock size={15} />
+                      Download PDF
+                    </button>
+                    <span className="text-xs text-gray-400">Unlock with <span className="text-amber-500 font-semibold">15 coins</span> in the Store</span>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="border border-gray-100 rounded-2xl p-6">
-              <MarkdownDocument content={summary} />
-            </div>
+            {isEditing ? (
+              <textarea
+                value={editDraft}
+                onChange={e => setEditDraft(e.target.value)}
+                className="w-full h-[60vh] px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-mono text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-violet-300"
+                spellCheck={false}
+              />
+            ) : (
+              <div className="border border-gray-100 rounded-2xl p-6">
+                <MarkdownDocument content={summary} />
+              </div>
+            )}
           </div>
         )}
       </div>

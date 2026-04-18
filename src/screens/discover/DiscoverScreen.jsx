@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search, SlidersHorizontal, Star, CheckCircle, Users, X, ChevronLeft } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { students, currentUser } from '../../data/dummy'
+import { students } from '../../data/dummy'
 import { computeMatchScore, getMatchLabel } from '../../utils/matchScore'
 
 const FIELDS = [
@@ -42,7 +42,7 @@ const VIBE_ICON = { 'Casual': '☕', 'Discussion': '💬', 'Structured': '📋' 
 const ALL_SCHOOLS = [...new Set(students.map(s => s.university).filter(Boolean))].sort()
 
 export default function DiscoverScreen() {
-  const { navigate, goBack, params, addBuddy, buddies, inviteToGroup, allGroups, matchPreferences } = useNav()
+  const { navigate, goBack, params, addBuddy, buddies, inviteToGroup, allGroups, matchPreferences, userProfile } = useNav()
 
   // Pick mode: passed from GroupDetailScreen when inviting to an existing group
   const pickMode = !!params?.pickGroupId
@@ -437,7 +437,7 @@ export default function DiscoverScreen() {
         <div className="grid grid-cols-2 gap-4">
           {filtered.map(student => {
             const isSelected = selected.has(student.id)
-            const { score } = computeMatchScore(currentUser, student, matchPreferences)
+            const { score } = computeMatchScore(userProfile, student, matchPreferences)
             const matchInfo = getMatchLabel(score)
             return (
               <div

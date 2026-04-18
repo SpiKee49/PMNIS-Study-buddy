@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { MessageCircle, UserPlus, Clock, BookOpen, Zap, ChevronLeft, X } from 'lucide-react'
 import Avatar from '../../components/Avatar'
-import { students, conversations, currentUser } from '../../data/dummy'
+import { students, conversations } from '../../data/dummy'
 import { computeMatchScore, getMatchLabel } from '../../utils/matchScore'
 
 export default function UserProfilePreviewScreen() {
-  const { params, navigate, goBack, addBuddy, buddies, matchPreferences } = useNav()
+  const { params, navigate, goBack, addBuddy, buddies, matchPreferences, userProfile } = useNav()
   const student = students.find(s => s.id === params.userId) || students[0]
   const [showReason, setShowReason] = useState(false)
-  const { score, positives, negatives } = computeMatchScore(currentUser, student, matchPreferences)
+  const { score, positives, negatives } = computeMatchScore(userProfile, student, matchPreferences)
   const matchInfo = getMatchLabel(score)
 
   const handleAddBuddy = () => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, Trash2 } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
+import { genericFlashcardSets } from '../../data/dummy'
 
 export default function FlashcardsScreen() {
   const { navigate, mySubjects, subjectFlashcardDecks, params, addFlashcardDeck, updateFlashcardDeck, removeFlashcardDeck } = useNav()
@@ -62,20 +63,9 @@ export default function FlashcardsScreen() {
 
   const createNewDeck = () => {
     const deckName = newDeckName.trim() || `Auto Deck ${decks.length + 1}`
-    const sampleCards = [
-      { question: 'What is the key idea behind gradient descent?', answer: 'Iteratively update model weights in the direction of negative gradient to minimize loss.' },
-      { question: 'Why is ReLU often preferred over sigmoid in deep networks?', answer: 'ReLU reduces vanishing gradient risk and is computationally simpler, allowing faster learning.' },
-      { question: 'What does overfitting mean?', answer: 'A model performs well on training data but poorly on unseen data; it memorizes instead of generalizing.' },
-      { question: 'What is regularization in machine learning?', answer: 'Regularization adds a penalty for complex models to improve generalization and reduce overfitting.' },
-      { question: 'What is batch normalization used for?', answer: 'It stabilizes activations and helps training converge faster by normalizing layer inputs.' },
-    ]
-
-    const cards = Array.from({ length: 10 }).map((_, i) => ({
-      id: `c${Date.now()}_${i}`,
-      question: sampleCards[i % sampleCards.length].question,
-      answer: sampleCards[i % sampleCards.length].answer,
-    }))
-
+    const sets = genericFlashcardSets[subjectId] || genericFlashcardSets.sub1
+    const rawCards = sets[decks.length % sets.length]
+    const cards = rawCards.map((c, i) => ({ id: `c${Date.now()}_${i}`, question: c.question, answer: c.answer }))
     const newDeckId = addFlashcardDeck(subjectId, deckName, cards)
     if (newDeckId) {
       setSelectedDeckId(newDeckId)

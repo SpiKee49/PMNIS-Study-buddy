@@ -2,26 +2,35 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { Bell, Sparkles, Calendar, X } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { currentUser, notifications, students } from '../../data/dummy'
-import { computeRecommendations } from '../../utils/matchEngine'
+import { notifications, students } from '../../data/dummy'
+import { computeMatchScore } from '../../utils/matchScore'
 
 export default function HomeScreen() {
-  const { navigate, schedule, hasUnlocked, reminders, removeReminder, userLearningStyle, userStudyVibe, userMatchSubjects } = useNav()
+  const { navigate, schedule, hasUnlocked, reminders, removeReminder, matchPreferences, userProfile } = useNav()
   const unreadNotifs = notifications.filter(n => !n.read).length
 
-  // Compute dynamic recommendations from current match preferences
+  // Compute dynamic recommendations ranked by match score from current preferences
   const limit = hasUnlocked('expanded-recommendations') ? 8 : 4
-  const userPrefs = useMemo(() => ({
-    learningStyle: userLearningStyle,
-    studyVibe: userStudyVibe,
-    subjectNames: userMatchSubjects,
-    university: currentUser.university,
-  }), [userLearningStyle, userStudyVibe, userMatchSubjects])
-
-  const displayedSuggestions = useMemo(
-    () => computeRecommendations(userPrefs, students, limit),
-    [userPrefs, limit]
-  )
+  const displayedSuggestions = useMemo(() => {
+    return students
+      .map(student => {
+        const { score, positives } = computeMatchScore(userProfile, student, matchPreferences)
+        const firstName = student.name.split(' ')[0]
+        const summary = positives.length > 0
+          ? positives.slice(0, 2).join(' · ')
+          : `${firstName} may offer a fresh perspective.`
+        return {
+          id: `rec-${student.id}`,
+          type: 'buddy',
+          text: `${firstName}: ${summary}`,
+          action: 'View Profile',
+          targetId: student.id,
+          score,
+        }
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+  }, [matchPreferences, limit, userProfile])
 
   // State for notification dropdown
   const [showNotifications, setShowNotifications] = useState(false)
@@ -48,7 +57,7 @@ export default function HomeScreen() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
             <p className="text-white/70 text-sm font-medium">Good afternoon,</p>
-            <h1 className="text-white text-2xl font-bold mt-0.5">{currentUser.name.split(' ')[0]} 👋</h1>
+            <h1 className="text-white text-2xl font-bold mt-0.5">{userProfile.name.split(' ')[0]} 👋</h1>
           </div>
           <div className="flex items-center gap-3">
             <button 
@@ -67,7 +76,7 @@ export default function HomeScreen() {
               className="hover:opacity-80 transition-opacity"
               title="Go to profile"
             >
-              <Avatar initials={currentUser.avatar} colorClass="bg-white/30" size="sm" />
+              <Avatar initials={userProfile.avatar} colorClass="bg-white/30" size="sm" />
             </button>
           </div>
         </div>
@@ -75,9 +84,9 @@ export default function HomeScreen() {
         {/* Stats */}
         <div className="max-w-4xl mx-auto flex gap-4 mt-6">
           {[
-            { label: 'Sessions', value: currentUser.sessionsCount },
-            { label: 'Buddies', value: currentUser.buddiesCount },
-            { label: 'Rating', value: `${currentUser.rating}★` },
+            { label: 'Sessions', value: userProfile.sessionsCount },
+            { label: 'Buddies', value: userProfile.buddiesCount },
+            { label: 'Rating', value: `${userProfile.rating}★` },
           ].map(stat => (
             <div key={stat.label} className="flex-1 max-w-[140px] bg-white/15 backdrop-blur rounded-2xl py-3 text-center">
               <p className="text-white font-bold text-xl leading-none">{stat.value}</p>

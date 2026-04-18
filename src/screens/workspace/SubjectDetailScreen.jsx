@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, FileText, Code, Plus, Upload, Folder, Trash2 } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
+import { materialFlashcards, materialQuestions, genericFlashcardSets, genericQuestionSets } from '../../data/dummy'
 
 function FileIcon({ type }) {
   if (type === 'pdf') return <FileText size={18} className="text-rose-600" />
@@ -123,27 +124,13 @@ export default function SubjectDetailScreen() {
   }
 
   const createDeckWithName = (deckName) => {
-    const sampleCards = [
-      { question: 'What is the key idea behind gradient descent?', answer: 'Iteratively update model weights in the direction of negative gradient to minimize loss.' },
-      { question: 'Why is ReLU often preferred over sigmoid in deep networks?', answer: 'ReLU reduces vanishing gradient risk and is computationally simpler, allowing faster learning.' },
-      { question: 'What does overfitting mean?', answer: 'A model performs well on training data but poorly on unseen data; it memorizes instead of generalizing.' },
-      { question: 'What is regularization in machine learning?', answer: 'Regularization adds a penalty for complex models to improve generalization and reduce overfitting.' },
-      { question: 'What is batch normalization used for?', answer: 'It stabilizes activations and helps training converge faster by normalizing layer inputs.' },
-    ]
-
-    const cards = Array.from({ length: 10 }).map((_, i) => ({
-      id: `c${Date.now()}_${i}`,
-      question: sampleCards[i % sampleCards.length].question,
-      answer: sampleCards[i % sampleCards.length].answer,
-    }))
-
+    const sets = genericFlashcardSets[subjectId] || genericFlashcardSets.sub1
+    const rawCards = sets[decks.length % sets.length]
+    const cards = rawCards.map((c, i) => ({ id: `c${Date.now()}_${i}`, question: c.question, answer: c.answer }))
     const newDeckId = addFlashcardDeck(subjectId, deckName, cards)
     if (newDeckId) {
       setSelectedDeckId(newDeckId)
-      // Force a re-render and navigation after context update
-      setTimeout(() => {
-        navigate('flashcards', { subjectId, deckId: newDeckId })
-      }, 100)
+      setTimeout(() => navigate('flashcards', { subjectId, deckId: newDeckId }), 100)
     }
   }
 
@@ -153,13 +140,12 @@ export default function SubjectDetailScreen() {
   }
 
   const createTestWithName = (testName) => {
-    const newTestId = addPracticeTest(subjectId, testName)
+    const sets = genericQuestionSets[subjectId] || genericQuestionSets.sub1
+    const questions = sets[tests.length % sets.length]
+    const newTestId = addPracticeTest(subjectId, testName, questions)
     if (newTestId) {
       setSelectedTestId(newTestId)
-      // Force a re-render and navigation after context update
-      setTimeout(() => {
-        navigate('practice-session', { subjectId, testId: newTestId })
-      }, 100)
+      setTimeout(() => navigate('practice-session', { subjectId, testId: newTestId }), 100)
     }
   }
 
@@ -307,8 +293,14 @@ export default function SubjectDetailScreen() {
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
                     <button
-                      onClick={() => {
-                        if (currentDeck) {
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const cards = materialFlashcards[mat.id]
+                        if (cards) {
+                          const deckName = mat.name
+                          const newDeckId = addFlashcardDeck(subjectId, deckName, cards)
+                          if (newDeckId) setTimeout(() => navigate('flashcards', { subjectId, deckId: newDeckId }), 100)
+                        } else if (currentDeck) {
                           navigate('flashcards', { subjectId, deckId: currentDeck.id })
                         } else {
                           createDeckWithName(newDeckName)
@@ -319,8 +311,14 @@ export default function SubjectDetailScreen() {
                       🃏 Cards
                     </button>
                     <button
-                      onClick={() => {
-                        if (currentTest) {
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const questions = materialQuestions[mat.id]
+                        if (questions) {
+                          const testName = mat.name
+                          const newTestId = addPracticeTest(subjectId, testName, questions)
+                          if (newTestId) setTimeout(() => navigate('practice-session', { subjectId, testId: newTestId }), 100)
+                        } else if (currentTest) {
                           navigate('practice-session', { subjectId, testId: currentTest.id })
                         } else {
                           createTestWithName(newTestName)

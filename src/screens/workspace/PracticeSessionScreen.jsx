@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, Trash2, Users } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
-import { mySubjects, practiceTests, sampleQuestions } from '../../data/dummy'
+import { sampleQuestions, genericQuestionSets } from '../../data/dummy'
 
 export default function PracticeSessionScreen() {
   const { navigate, params, mySubjects, subjectPracticeTests, addPracticeTest, removePracticeTest } = useNav()
@@ -17,7 +17,7 @@ export default function PracticeSessionScreen() {
   const [showExample, setShowExample] = useState(false)
 
   const test = tests.find(t => t.id === selectedTestId) || tests[0] || null
-  const questions = test ? sampleQuestions.slice(0, Math.max(test.questionCount || 10, 10)) : []
+  const questions = test ? (test.questions || sampleQuestions.slice(0, Math.max(test.questionCount || 10, 10))) : []
 
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -40,7 +40,9 @@ export default function PracticeSessionScreen() {
 
   const createNewTest = () => {
     const testName = newTestName.trim() || `Auto Test ${tests.length + 1}`
-    const newTestId = addPracticeTest(subjectId, testName)
+    const sets = genericQuestionSets[subjectId] || genericQuestionSets.sub1
+    const questions = sets[tests.length % sets.length]
+    const newTestId = addPracticeTest(subjectId, testName, questions)
     if (newTestId) {
       setSelectedTestId(newTestId)
       setIsNewTestDialogOpen(false)

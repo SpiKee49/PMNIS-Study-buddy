@@ -1,6 +1,5 @@
 import { Home, Compass, Users, MessageCircle, User, BookOpen, Settings, Heart, Coins } from 'lucide-react'
 import { useNav } from '../context/NavigationContext'
-import { currentUser } from '../data/dummy'
 
 const navItems = [
   { id: 'home',     label: 'Home',      icon: Home,          screen: 'home' },
@@ -21,7 +20,7 @@ const tabScreens = {
 }
 
 export default function Sidebar({ active }) {
-  const { navigate, studyCoins, conversations, darkMode } = useNav()
+  const { navigate, studyCoins, conversations, darkMode, userProfile } = useNav()
   const activeTab = tabScreens[active] || 'home'
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unread, 0)
 
@@ -101,12 +100,12 @@ export default function Sidebar({ active }) {
             darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
           }`}
         >
-          <div className={`w-8 h-8 ${currentUser.avatarColor} rounded-full flex items-center justify-center flex-shrink-0`}>
-            <span className="text-xs font-bold text-white">{currentUser.avatar}</span>
+          <div className={`w-8 h-8 ${userProfile.avatarColor} rounded-full flex items-center justify-center flex-shrink-0`}>
+            <span className="text-xs font-bold text-white">{userProfile.avatar}</span>
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p className={`text-sm font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-800'} truncate`}>{currentUser.name}</p>
-            <p className={`text-[11px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} truncate`}>{currentUser.username}</p>
+            <p className={`text-sm font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-800'} truncate`}>{userProfile.name}</p>
+            <p className={`text-[11px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} truncate`}>{userProfile.username}</p>
           </div>
           <Settings size={14} className={`${darkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-gray-600'} flex-shrink-0`} />
         </button>

@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useNav } from '../../context/NavigationContext'
 import { learningStyles } from '../../data/dummy'
 
+const STYLE_ID_TO_LABEL = { visual: 'Visual', auditory: 'Auditory', reading: 'Reading/Writing', kinesthetic: 'Kinesthetic' }
+
 export default function LearningStyleScreen() {
-  const { navigate } = useNav()
+  const { navigate, updateUserProfile } = useNav()
   const [selected, setSelected] = useState('visual')
 
   return (
@@ -59,7 +61,10 @@ export default function LearningStyleScreen() {
       {/* Next */}
       <div className="px-8 pb-8 pt-6">
         <button
-          onClick={() => navigate('onboarding-availability')}
+          onClick={() => {
+            updateUserProfile({ learningStyle: STYLE_ID_TO_LABEL[selected] || 'Visual' })
+            navigate('onboarding-availability')
+          }}
           className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-violet-200 active:scale-95 transition-transform"
         >
           Continue
