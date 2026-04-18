@@ -6,11 +6,13 @@ export default function WeakAreaMatchScreen() {
   const { navigate, goBack, params } = useNav()
   const weakTopics = params?.weakTopics || []
 
-  // Score each student by how many weak topics they specialise in
+  // Normalize British/American spelling variants before comparing
+  const norm = t => t.toLowerCase().replace(/isation/g, 'ization').replace(/isation/g, 'ization').trim()
+
   const matches = students
     .map(s => {
       const matched = weakTopics.filter(t =>
-        s.specializations?.some(spec => spec.toLowerCase() === t.toLowerCase())
+        s.specializations?.some(spec => norm(spec) === norm(t))
       )
       return { ...s, matchedTopics: matched }
     })
