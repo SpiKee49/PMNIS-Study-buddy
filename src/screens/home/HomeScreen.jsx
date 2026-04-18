@@ -1,15 +1,27 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Bell, Sparkles, Calendar, X } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
-import { currentUser, aiSuggestions, notifications } from '../../data/dummy'
+import { currentUser, notifications, students } from '../../data/dummy'
+import { computeRecommendations } from '../../utils/matchEngine'
 
 export default function HomeScreen() {
-  const { navigate, schedule, hasUnlocked, reminders, removeReminder } = useNav()
+  const { navigate, schedule, hasUnlocked, reminders, removeReminder, userLearningStyle, userStudyVibe, userMatchSubjects } = useNav()
   const unreadNotifs = notifications.filter(n => !n.read).length
 
-  // Show expanded recommendations if unlocked, otherwise show first 4
-  const displayedSuggestions = hasUnlocked('expanded-recommendations') ? aiSuggestions : aiSuggestions.slice(0, 4)
+  // Compute dynamic recommendations from current match preferences
+  const limit = hasUnlocked('expanded-recommendations') ? 8 : 4
+  const userPrefs = useMemo(() => ({
+    learningStyle: userLearningStyle,
+    studyVibe: userStudyVibe,
+    subjectNames: userMatchSubjects,
+    university: currentUser.university,
+  }), [userLearningStyle, userStudyVibe, userMatchSubjects])
+
+  const displayedSuggestions = useMemo(
+    () => computeRecommendations(userPrefs, students, limit),
+    [userPrefs, limit]
+  )
 
   // State for notification dropdown
   const [showNotifications, setShowNotifications] = useState(false)
