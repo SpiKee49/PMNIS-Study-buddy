@@ -10,7 +10,6 @@ import {
   CheckCircle,
   X,
   Coins,
-  Info,
 } from 'lucide-react'
 
 const CoinAnimation = () => {
@@ -123,12 +122,18 @@ export default function FeedbackForm({ buddy, onClose, onSubmit }) {
         </div>
 
         {/* Info Note */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
-          <Info size={18} className="text-blue-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-blue-900">Your feedback matters!</p>
-            <p className="text-xs text-blue-700 mt-1">
-              Your honest feedback helps us improve buddy-matching and create better study experiences for everyone. Plus, you'll earn Study Coins!
+        <div className="mb-6 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-md">
+          <div className="bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-3 flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center flex-shrink-0 animate-bounce">
+              <Coins size={22} className="text-amber-900" />
+            </div>
+            <p className="text-base font-extrabold text-amber-900 tracking-tight">Your feedback matters!</p>
+            <span className="ml-auto bg-amber-900/20 text-amber-900 text-xs font-extrabold px-3 py-1 rounded-full whitespace-nowrap">+25 Coins</span>
+          </div>
+          <div className="bg-amber-50 px-4 py-3 flex items-center gap-2">
+            <Coins size={14} className="text-amber-500 flex-shrink-0" />
+            <p className="text-xs text-amber-800">
+              Your honest feedback improves buddy-matching for everyone — and you'll earn <span className="font-bold">Study Coins</span> for sharing it!
             </p>
           </div>
         </div>
