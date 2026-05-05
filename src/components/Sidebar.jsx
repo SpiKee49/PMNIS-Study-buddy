@@ -1,20 +1,22 @@
-import { Home, Compass, Users, MessageCircle, User, BookOpen, Settings, Heart, Coins } from 'lucide-react'
+import { Home, Compass, Users, MessageCircle, User, BookOpen, Settings, Heart, Coins, LayoutDashboard } from 'lucide-react'
 import { useNav } from '../context/NavigationContext'
 
 const navItems = [
-  { id: 'home',     label: 'Home',      icon: Home,          screen: 'home' },
-  { id: 'discover', label: 'Discover',  icon: Compass,       screen: 'discover' },
-  { id: 'buddies',  label: 'Buddies',   icon: Heart,         screen: 'buddies' },
-  { id: 'groups',   label: 'Groups',    icon: Users,         screen: 'groups' },
-  { id: 'messages', label: 'Messages',  icon: MessageCircle, screen: 'messages' },
-  { id: 'profile',  label: 'Profile',   icon: User,          screen: 'profile' },
+  { id: 'home',      label: 'Home',      icon: Home,            screen: 'home' },
+  { id: 'workspace', label: 'Workspace', icon: LayoutDashboard, screen: 'my-workspace' },
+  { id: 'discover',  label: 'Discover',  icon: Compass,         screen: 'discover' },
+  { id: 'buddies',   label: 'Buddies',   icon: Heart,           screen: 'buddies' },
+  { id: 'groups',    label: 'Groups',    icon: Users,           screen: 'groups' },
+  { id: 'messages',  label: 'Messages',  icon: MessageCircle,   screen: 'messages' },
+  { id: 'profile',   label: 'Profile',   icon: User,            screen: 'profile' },
 ]
 
 const tabScreens = {
   home: 'home',
   discover: 'discover', 'user-profile-preview': 'discover',
   buddies: 'buddies',
-  groups: 'groups', 'group-detail': 'groups', 'group-chat': 'groups', workspace: 'groups',
+  groups: 'groups', 'group-detail': 'groups', 'group-chat': 'groups',
+  workspace: 'workspace', 'my-workspace': 'workspace',
   messages: 'messages', 'direct-message': 'messages',
   profile: 'profile', 'edit-profile': 'profile', settings: 'profile',
 }

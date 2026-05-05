@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Search, SlidersHorizontal, Star, CheckCircle, Users, X, ChevronLeft } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Search, SlidersHorizontal, Star, CheckCircle, Users, X, ChevronLeft, ArrowUpDown } from 'lucide-react'
 import { useNav } from '../../context/NavigationContext'
 import Avatar from '../../components/Avatar'
 import { students } from '../../data/dummy'
@@ -41,6 +41,14 @@ const VIBE_ICON = { 'Casual': '☕', 'Discussion': '💬', 'Structured': '📋' 
 
 const ALL_SCHOOLS = [...new Set(students.map(s => s.university).filter(Boolean))].sort()
 
+const SORT_OPTIONS = [
+  { id: 'match',    label: 'Best Match',    icon: '⭐' },
+  { id: 'rating',   label: 'Highest Rated', icon: '🏅' },
+  { id: 'sessions', label: 'Most Sessions', icon: '📚' },
+  { id: 'buddies',  label: 'Most Buddies',  icon: '👥' },
+  { id: 'name',     label: 'Name (A–Z)',    icon: '🔤' },
+]
+
 export default function DiscoverScreen() {
   const { navigate, goBack, params, addBuddy, buddies, inviteToGroup, allGroups, matchPreferences, userProfile } = useNav()
 
@@ -64,6 +72,16 @@ export default function DiscoverScreen() {
   const [addedBuddies, setAddedBuddies] = useState(new Set())
   const [selected, setSelected] = useState(new Set()) // pick mode selections
   const [confirmed, setConfirmed] = useState(false)
+  const [sortBy, setSortBy] = useState('match')
+  const [showSort, setShowSort] = useState(false)
+  const sortRef = useRef(null)
+
+  useEffect(() => {
+    if (!showSort) return
+    const handler = (e) => { if (sortRef.current && !sortRef.current.contains(e.target)) setShowSort(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showSort])
 
   const activeFilterCount = [
     activeField !== 'All',
@@ -101,9 +119,23 @@ export default function DiscoverScreen() {
     const matchOnline = !onlineOnly || s.online
     const sq = schoolQuery.toLowerCase().trim()
     const matchSchool = sq === '' || (s.university && s.university.toLowerCase().includes(sq))
-    // In pick mode hide existing members
+    // In pick mode hide existing members; in normal mode hide existing buddies
     const notAlreadyMember = !pickMode || !existingMemberIds.has(s.id)
-    return matchQuery && matchField && matchSchoolType && matchYear && matchStyle && matchVibe && matchOnline && matchSchool && notAlreadyMember
+    const notAlreadyBuddy = pickMode || (!buddies.includes(s.id) && !addedBuddies.has(s.id))
+    return matchQuery && matchField && matchSchoolType && matchYear && matchStyle && matchVibe && matchOnline && matchSchool && notAlreadyMember && notAlreadyBuddy
+  })
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'match') {
+      const { score: sa } = computeMatchScore(userProfile, a, matchPreferences)
+      const { score: sb } = computeMatchScore(userProfile, b, matchPreferences)
+      return sb - sa
+    }
+    if (sortBy === 'rating')   return parseFloat(b.rating) - parseFloat(a.rating)
+    if (sortBy === 'sessions') return parseInt(b.sessionsCount) - parseInt(a.sessionsCount)
+    if (sortBy === 'buddies')  return parseInt(b.buddiesCount) - parseInt(a.buddiesCount)
+    if (sortBy === 'name')     return a.name.localeCompare(b.name)
+    return 0
   })
 
   const handleAddBuddy = (e, studentId) => {
@@ -252,6 +284,37 @@ export default function DiscoverScreen() {
                   </span>
                 )}
               </button>
+              <div className="relative" ref={sortRef}>
+                <button
+                  onClick={() => setShowSort(v => !v)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all whitespace-nowrap ${
+                    sortBy !== 'match'
+                      ? 'bg-violet-600 text-white border-violet-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300'
+                  }`}
+                >
+                  <ArrowUpDown size={15} />
+                  {SORT_OPTIONS.find(o => o.id === sortBy)?.label}
+                </button>
+                {showSort && (
+                  <div className="absolute right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-30 min-w-[170px] overflow-hidden">
+                    {SORT_OPTIONS.map(opt => (
+                      <button
+                        key={opt.id}
+                        onClick={() => { setSortBy(opt.id); setShowSort(false) }}
+                        className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors text-left ${
+                          sortBy === opt.id
+                            ? 'bg-violet-50 text-violet-700 font-semibold'
+                            : 'text-gray-700 font-medium hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{opt.icon}</span>
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -435,7 +498,7 @@ export default function DiscoverScreen() {
         )}
 
         <div className="grid grid-cols-2 gap-4">
-          {filtered.map(student => {
+          {sorted.map(student => {
             const isSelected = selected.has(student.id)
             const { score } = computeMatchScore(userProfile, student, matchPreferences)
             const matchInfo = getMatchLabel(score)

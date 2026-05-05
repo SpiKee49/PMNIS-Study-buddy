@@ -93,13 +93,6 @@ export default function HomeScreen() {
               <p className="text-white/60 text-xs mt-1">{stat.label}</p>
             </div>
           ))}
-          <button
-            onClick={() => navigate('my-workspace')}
-            className="bg-white/20 backdrop-blur rounded-2xl py-3 px-4 flex items-center justify-center gap-2"
-          >
-            <span className="text-base">📓</span>
-            <span className="text-white text-sm font-semibold">My Workspace</span>
-          </button>
         </div>
       </div>
 
